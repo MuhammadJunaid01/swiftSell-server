@@ -24,7 +24,7 @@ export const generateOtp = () => {
 const generateHtmlContent = async (otp: string, name: string) => {
   try {
     // Define the path to your HTML template
-    const templatePath = path.join(__dirname, "template.html");
+    const templatePath = path.join(__dirname, "otpTemplate.html");
 
     // Read the HTML template
     const template = await fs.promises.readFile(templatePath, "utf-8");
