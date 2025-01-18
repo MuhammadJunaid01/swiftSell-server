@@ -1,10 +1,11 @@
 import crypto from "crypto";
+import ejs from "ejs";
 import fs from "fs";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import path from "path";
 import config from "../../config";
-const templatePath = path.resolve(__dirname, "../../builder/otpTemplate.html");
+const templatePath = path.resolve(__dirname, "../../builder/otpTemplate.ejs");
 export const generateOtp = () => {
   return crypto.randomBytes(3).toString("hex"); // Generate a 6-character OTP
 };
@@ -12,7 +13,8 @@ export const generateOtp = () => {
 const generateHtmlContent = async (otp: string) => {
   try {
     const template = await fs.promises.readFile(templatePath, "utf-8");
-    return template.replace("{{otp}}", otp);
+    // return template.replace("{{otp}}", otp);
+    return ejs.render(template, { name: "Muhammad Junaid", otp });
   } catch (error) {
     console.error("Error reading HTML template:", error);
     throw new Error("Failed to generate HTML content");
