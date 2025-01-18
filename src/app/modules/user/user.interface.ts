@@ -7,4 +7,8 @@ export interface IUser extends Document {
   phoneNumber?: string;
   gender: string;
   location?: string;
+  otp?: string;
+  otpExpiration?: Date;
+  password: string;
+  isVerified: boolean;
 }

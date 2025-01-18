@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import { TErrorReturnType, TErrorSouce } from '../interfaces';
+import { TErrorReturnType, TErrorSource } from "../interfaces";
 
 export const handleMongooseDuplicateKeyError = (
   error: any
@@ -14,10 +14,12 @@ export const handleMongooseDuplicateKeyError = (
 
   const statusCode = 404;
   const message = "can't create duplicate ";
-  const errorSources: TErrorSouce[] = [
+  const errorSources: TErrorSource[] = [
     {
       path: Object.keys(error.keyPattern)[0],
-      message: `Duplicate value for field ${Object.keys(error.keyValue)[0]}: ${duplicateValue}`,
+      message: `Duplicate value for field ${
+        Object.keys(error.keyValue)[0]
+      }: ${duplicateValue}`,
     },
   ];
   return {

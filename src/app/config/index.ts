@@ -7,4 +7,6 @@ export default {
   database_url: process.env.DATABASE_URL_LOCAL,
   secret: process.env.SECRET_TOKEN,
   secret_refresh: process.env.SECRET_REFRESH,
+  email_user: process.env.EMAIL_USER,
+  email_pass: process.env.EMAIL_PASS,
 };

@@ -1,4 +1,6 @@
 import cors from "cors";
+import "express-async-errors";
+
 import express, { Application, Request, Response } from "express";
 import { errorHandler } from "./app/errors/globalError";
 import router from "./app/routes";
