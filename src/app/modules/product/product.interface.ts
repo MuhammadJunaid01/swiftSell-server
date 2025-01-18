@@ -1,12 +1,13 @@
 import { IReview } from "../review/review.interface";
 
 // Category and Subcategory Types
-export type CategoryType =
-  | "fashion"
-  | "electronics"
-  | "appliances"
-  | "beauty"
-  | "furniture";
+export enum CategoryType {
+  Fashion = "fashion",
+  Electronics = "electronics",
+  Appliances = "appliances",
+  Beauty = "beauty",
+  Furniture = "furniture",
+}
 
 export interface SubCategory {
   name: string;
@@ -29,7 +30,11 @@ export interface Inventory {
 }
 
 // Deal Type Enum
-export type DealType = "day" | "week" | "month";
+export enum DealType {
+  Day = "day",
+  Week = "week",
+  Month = "month",
+}
 
 // Shipping Details
 export interface ShippingDetails {
@@ -52,9 +57,9 @@ export interface IProduct {
   category: CategoryType; // Main product category
   subCategory?: SubCategory; // Optional subcategory
   images?: string[]; // Array of image URLs
-  thumbnailImage: string; // Optional URL for the main thumbnail image
-  ratings: number; // Average rating of the product
-  reviews: IReview[]; // Array of reviews
+  thumbnail: string; // Optional URL for the main thumbnail image
+  ratings?: number; // Average rating of the product
+  reviews?: IReview[]; // Array of reviews
   discount?: Discount; // Optional discount details
   inventory: Inventory; // Inventory details
   isDeal: boolean; // Whether the product is part of a special deal
