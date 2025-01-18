@@ -39,7 +39,7 @@ const registerUserIntoDB = async (user: IUser) => {
     await newUser.save({ session });
 
     // Send OTP to user's email
-    await sendOtpEmail(email, otp);
+    await sendOtpEmail(email, otp, user.name);
 
     // Commit the transaction
     await session.commitTransaction();

@@ -21,17 +21,31 @@ export const generateOtp = () => {
   return otp.toString().padStart(4, "0");
 };
 
-const generateHtmlContent = async (otp: string) => {
+const generateHtmlContent = async (otp: string, name: string) => {
   try {
+    // Define the path to your HTML template
+    const templatePath = path.join(__dirname, "template.html");
+
+    // Read the HTML template
     const template = await fs.promises.readFile(templatePath, "utf-8");
-    return ejs.render(template, { name: "Muhammad Junaid", otp });
+
+    // Replace placeholders with actual values
+    const htmlContent = template
+      .replace("{{name}}", "Muhammad Junaid")
+      .replace("{{otp}}", otp);
+
+    return htmlContent;
   } catch (error) {
     console.error("Error reading HTML template:", error);
     throw new Error("Failed to generate HTML content");
   }
 };
-export const sendOtpEmail = async (email: string, otp: string) => {
-  const htmlContent = await generateHtmlContent(otp);
+export const sendOtpEmail = async (
+  email: string,
+  otp: string,
+  name: string
+) => {
+  const htmlContent = await generateHtmlContent(otp, name);
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,

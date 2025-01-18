@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateToken = exports.sendOtpEmail = exports.generateOtp = void 0;
 const crypto_1 = __importDefault(require("crypto"));
-const ejs_1 = __importDefault(require("ejs"));
 const fs_1 = __importDefault(require("fs"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
@@ -33,18 +32,25 @@ const generateOtp = () => {
     return otp.toString().padStart(4, "0");
 };
 exports.generateOtp = generateOtp;
-const generateHtmlContent = (otp) => __awaiter(void 0, void 0, void 0, function* () {
+const generateHtmlContent = (otp, name) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        // Define the path to your HTML template
+        const templatePath = path_1.default.join(__dirname, "template.html");
+        // Read the HTML template
         const template = yield fs_1.default.promises.readFile(templatePath, "utf-8");
-        return ejs_1.default.render(template, { name: "Muhammad Junaid", otp });
+        // Replace placeholders with actual values
+        const htmlContent = template
+            .replace("{{name}}", "Muhammad Junaid")
+            .replace("{{otp}}", otp);
+        return htmlContent;
     }
     catch (error) {
         console.error("Error reading HTML template:", error);
         throw new Error("Failed to generate HTML content");
     }
 });
-const sendOtpEmail = (email, otp) => __awaiter(void 0, void 0, void 0, function* () {
-    const htmlContent = yield generateHtmlContent(otp);
+const sendOtpEmail = (email, otp, name) => __awaiter(void 0, void 0, void 0, function* () {
+    const htmlContent = yield generateHtmlContent(otp, name);
     const transporter = nodemailer_1.default.createTransport({
         host: "smtp.gmail.com",
         port: 587,

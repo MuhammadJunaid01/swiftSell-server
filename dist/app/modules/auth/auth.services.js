@@ -57,7 +57,7 @@ const registerUserIntoDB = (user) => __awaiter(void 0, void 0, void 0, function*
         // Save the new user within the transaction
         yield newUser.save({ session });
         // Send OTP to user's email
-        yield (0, utils_1.sendOtpEmail)(email, otp);
+        yield (0, utils_1.sendOtpEmail)(email, otp, user.name);
         // Commit the transaction
         yield session.commitTransaction();
         return "User registered. Please verify your email.";
