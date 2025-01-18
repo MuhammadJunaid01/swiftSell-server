@@ -19,7 +19,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const path_1 = __importDefault(require("path"));
 const config_1 = __importDefault(require("../../config"));
-const templatePath = path_1.default.resolve(__dirname, "../../builder/otpTemplate.ejs");
+const templatePath = path_1.default.resolve(__dirname, "../../builder/otpTemplate.html");
 const generateOtp = () => {
     // Generate a 4-byte buffer and convert it to a hexadecimal string
     const otpBuffer = crypto_1.default.randomBytes(2); // 2 bytes = 16 bits = 4 hex digits
@@ -34,13 +34,13 @@ const generateOtp = () => {
 exports.generateOtp = generateOtp;
 const generateHtmlContent = (otp, name) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // Define the path to your HTML template
-        const templatePath = path_1.default.join(__dirname, "otpTemplate.html");
         // Read the HTML template
         const template = yield fs_1.default.promises.readFile(templatePath, "utf-8");
+        const year = new Date().getFullYear();
         // Replace placeholders with actual values
         const htmlContent = template
-            .replace("{{name}}", "Muhammad Junaid")
+            .replace("{{name}}", name)
+            .replace("{{year}}", year.toString())
             .replace("{{otp}}", otp);
         return htmlContent;
     }
@@ -78,7 +78,7 @@ const sendOtpEmail = (email, otp, name) => __awaiter(void 0, void 0, void 0, fun
 exports.sendOtpEmail = sendOtpEmail;
 const generateToken = (userId) => {
     const payload = { userId };
-    const secretKey = process.env.JWT_SECRET_KEY || "your-secret-key";
+    const secretKey = process.env.JWT_SECRET_KEY || "";
     const options = { expiresIn: "1h" };
     return jsonwebtoken_1.default.sign(payload, secretKey, options);
 };

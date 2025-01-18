@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import path from "path";
 import config from "../../config";
-const templatePath = path.resolve(__dirname, "../../builder/otpTemplate.ejs");
+const templatePath = path.resolve(__dirname, "../../builder/otpTemplate.html");
 export const generateOtp = () => {
   // Generate a 4-byte buffer and convert it to a hexadecimal string
   const otpBuffer = crypto.randomBytes(2); // 2 bytes = 16 bits = 4 hex digits
@@ -23,15 +23,13 @@ export const generateOtp = () => {
 
 const generateHtmlContent = async (otp: string, name: string) => {
   try {
-    // Define the path to your HTML template
-    const templatePath = path.join(__dirname, "otpTemplate.html");
-
     // Read the HTML template
     const template = await fs.promises.readFile(templatePath, "utf-8");
-
+    const year = new Date().getFullYear();
     // Replace placeholders with actual values
     const htmlContent = template
-      .replace("{{name}}", "Muhammad Junaid")
+      .replace("{{name}}", name)
+      .replace("{{year}}", year.toString())
       .replace("{{otp}}", otp);
 
     return htmlContent;
@@ -74,7 +72,7 @@ export const sendOtpEmail = async (
 
 export const generateToken = (userId: string): string => {
   const payload = { userId };
-  const secretKey = process.env.JWT_SECRET_KEY || "your-secret-key";
+  const secretKey = process.env.JWT_SECRET_KEY || "";
   const options = { expiresIn: "1h" };
   return jwt.sign(payload, secretKey, options);
 };
