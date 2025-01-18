@@ -7,7 +7,18 @@ import path from "path";
 import config from "../../config";
 const templatePath = path.resolve(__dirname, "../../builder/otpTemplate.ejs");
 export const generateOtp = () => {
-  return crypto.randomBytes(3).toString("hex"); // Generate a 6-character OTP
+  // Generate a 4-byte buffer and convert it to a hexadecimal string
+  const otpBuffer = crypto.randomBytes(2); // 2 bytes = 16 bits = 4 hex digits
+  const otpHex = otpBuffer.toString("hex");
+
+  // Convert the hexadecimal string to a decimal number
+  const otpDecimal = parseInt(otpHex, 16);
+
+  // Ensure the OTP is 4 digits by taking the modulus with 10000
+  const otp = otpDecimal % 10000;
+
+  // Pad the OTP with leading zeros if necessary
+  return otp.toString().padStart(4, "0");
 };
 
 const generateHtmlContent = async (otp: string) => {
