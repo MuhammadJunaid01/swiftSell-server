@@ -13,7 +13,8 @@
     "clean-install": "rmdir /s /q node_modules && del yarn.lock && yarn",
     "commit": "eslint src --fix && tsc && git add . && git-cz && git push",
     "sync": "git pull origin develop && git push && yarn",
-    "format": "prettier --write \"src/**/*.ts\""
+    "format": "prettier --write \"src/**/*.ts\"",
+    "postinstall": "yarn install && yarn  build"
   },
   "keywords": [],
   "author": "",
