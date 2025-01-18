@@ -1,10 +1,10 @@
 import bcrypt from "bcryptjs";
 import httpStatus from "http-status";
 import mongoose from "mongoose";
-import { AppError } from "../errors/globalError";
-import { generateOtp, generateToken, sendOtpEmail } from "../lib/utils";
-import { IUser } from "../modules/user/user.interface";
-import User from "../modules/user/user.model";
+import { AppError } from "../../errors/globalError";
+import { generateOtp, generateToken, sendOtpEmail } from "../../lib/utils";
+import { IUser } from "../user/user.interface";
+import User from "../user/user.model";
 
 const registerUserIntoDB = async (user: IUser) => {
   const { name, email, password, gender } = user;
@@ -98,7 +98,12 @@ const loginUserIntoDB = async (email: string, password: string) => {
 
   // Check if user is verified
   if (!user.isVerified) {
-    throw new AppError("Email not verified", httpStatus.UNAUTHORIZED);
+    // Delete the unverified user
+    await User.deleteOne({ email });
+    throw new AppError(
+      "Email not verified. User has been removed.",
+      httpStatus.UNAUTHORIZED
+    );
   }
 
   // Compare passwords
@@ -111,11 +116,13 @@ const loginUserIntoDB = async (email: string, password: string) => {
   const token = generateToken((user as any)?._id.toString());
 
   // Return user without password
+  const { password: _, ...userWithoutPassword } = user.toObject();
   return {
     token,
-    user: user.toJSON(), // Ensure toJSON transformation is applied
+    user: userWithoutPassword,
   };
 };
+
 export const AuthServices = {
   registerUserIntoDB,
   verifyOtpIntoDB,

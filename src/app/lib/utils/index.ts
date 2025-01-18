@@ -13,7 +13,6 @@ export const generateOtp = () => {
 const generateHtmlContent = async (otp: string) => {
   try {
     const template = await fs.promises.readFile(templatePath, "utf-8");
-    // return template.replace("{{otp}}", otp);
     return ejs.render(template, { name: "Muhammad Junaid", otp });
   } catch (error) {
     console.error("Error reading HTML template:", error);
