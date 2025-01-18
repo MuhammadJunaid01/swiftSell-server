@@ -35,7 +35,7 @@ exports.generateOtp = generateOtp;
 const generateHtmlContent = (otp, name) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Define the path to your HTML template
-        const templatePath = path_1.default.join(__dirname, "template.html");
+        const templatePath = path_1.default.join(__dirname, "otpTemplate.html");
         // Read the HTML template
         const template = yield fs_1.default.promises.readFile(templatePath, "utf-8");
         // Replace placeholders with actual values
