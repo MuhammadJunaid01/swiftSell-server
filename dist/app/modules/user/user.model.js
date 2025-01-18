@@ -50,7 +50,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 const user_interface_1 = require("./user.interface");
 const UserSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
+    email: { type: String, required: true },
     profileImage: { type: String, required: false },
     phoneNumber: { type: String, required: false },
     location: { type: String, required: false },

@@ -5,7 +5,7 @@ import { Gender, IUser } from "./user.interface";
 const UserSchema: Schema<IUser> = new Schema(
   {
     name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
+    email: { type: String, required: true },
     profileImage: { type: String, required: false },
     phoneNumber: { type: String, required: false },
     location: { type: String, required: false },
