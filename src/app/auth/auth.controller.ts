@@ -12,4 +12,14 @@ const registerUser = catchAsync(async (req: Request, res: Response) => {
     data: response,
   });
 });
-export const AuthControllers = { registerUser };
+const verifyOtp = catchAsync(async (req: Request, res: Response) => {
+  const { email, otp } = req.body;
+  const response = await AuthServices.verifyOtpIntoDB(email, otp);
+  sendResponse(res, {
+    success: true,
+    message: "successfully verified",
+    statusCode: httpStatus.CREATED,
+    data: response,
+  });
+});
+export const AuthControllers = { registerUser, verifyOtp };

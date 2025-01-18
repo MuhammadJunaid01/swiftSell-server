@@ -1,13 +1,25 @@
 import crypto from "crypto";
+import fs from "fs";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
+import path from "path";
 import config from "../../config";
-
+const templatePath = path.resolve(__dirname, "../../builder/otpTemplate.html");
 export const generateOtp = () => {
   return crypto.randomBytes(3).toString("hex"); // Generate a 6-character OTP
 };
 
+const generateHtmlContent = async (otp: string) => {
+  try {
+    const template = await fs.promises.readFile(templatePath, "utf-8");
+    return template.replace("{{otp}}", otp);
+  } catch (error) {
+    console.error("Error reading HTML template:", error);
+    throw new Error("Failed to generate HTML content");
+  }
+};
 export const sendOtpEmail = async (email: string, otp: string) => {
+  const htmlContent = await generateHtmlContent(otp);
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
@@ -22,7 +34,8 @@ export const sendOtpEmail = async (email: string, otp: string) => {
     from: config.email_pass,
     to: email,
     subject: "Your OTP Code",
-    text: `Your OTP code is ${otp}. It will expire in 10 minutes.`,
+    // text: `Your OTP code is ${otp}. It will expire in 10 minutes.`,
+    html: htmlContent,
   };
 
   try {
