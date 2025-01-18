@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import mongoose, { Document, Schema } from "mongoose";
-import { IUser } from "./user.interface";
+import { Gender, IUser } from "./user.interface";
 
 const UserSchema: Schema<IUser> = new Schema(
   {
@@ -13,6 +13,12 @@ const UserSchema: Schema<IUser> = new Schema(
     otpExpiration: { type: Date },
     password: { type: String, required: true },
     isVerified: { type: Boolean, default: false },
+    gender: {
+      type: String,
+      enum: Object.values(Gender),
+      required: false,
+      default: Gender.PreferNotToSay,
+    },
   },
   { timestamps: true }
 );
