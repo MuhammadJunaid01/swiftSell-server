@@ -3,58 +3,232 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Your OTP Code</title>
+    <title>Verify Your Email - SwiftSell</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f4;
+      * {
         margin: 0;
         padding: 0;
+        box-sizing: border-box;
       }
-      .container {
-        width: 100%;
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f6f9fc;
+        margin: 0;
+        padding: 20px;
+        color: #1a1a1a;
+      }
+
+      .email-container {
         max-width: 600px;
         margin: 0 auto;
-        background-color: #ffffff;
-        padding: 20px;
-        border-radius: 5px;
+        background: #ffffff;
+        border-radius: 16px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
       }
-      h1 {
+
+      .header {
+        background-image: linear-gradient(
+            rgba(0, 0, 0, 0.5),
+            rgba(0, 0, 0, 0.5)
+          ),
+          url("/api/placeholder/600/200");
+        background-size: cover;
+        background-position: center;
+        padding: 40px 20px;
         text-align: center;
-        color: #333333;
+        position: relative;
       }
-      p {
-        font-size: 16px;
-        color: #555555;
-        line-height: 1.5;
+
+      .header-overlay {
+        background: linear-gradient(
+          135deg,
+          rgba(79, 70, 229, 0.9),
+          rgba(45, 39, 180, 0.9)
+        );
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1;
       }
-      .otp-code {
+
+      .logo-container {
+        position: relative;
+        z-index: 2;
+        margin-bottom: 20px;
+      }
+
+      .logo {
+        background: #ffffff;
+        padding: 15px 25px;
+        border-radius: 12px;
+        display: inline-block;
+      }
+
+      .logo img {
+        height: 40px;
+        width: auto;
+      }
+
+      .header-text {
+        color: white;
         font-size: 24px;
-        font-weight: bold;
-        color: #333333;
-        text-align: center;
-        margin: 20px 0;
+        font-weight: 600;
+        position: relative;
+        z-index: 2;
       }
+
+      .content {
+        padding: 40px;
+      }
+
+      h1 {
+        color: #1a1a1a;
+        font-size: 24px;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 24px;
+      }
+
+      .greeting {
+        font-size: 18px;
+        margin-bottom: 20px;
+        color: #4a5568;
+      }
+
+      .message {
+        line-height: 1.6;
+        margin-bottom: 32px;
+        color: #4a5568;
+      }
+
+      .otp-container {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 24px;
+        margin: 32px 0;
+        text-align: center;
+        border: 2px dashed #e2e8f0;
+      }
+
+      .otp-code {
+        font-family: monospace;
+        font-size: 32px;
+        letter-spacing: 8px;
+        color: #4f46e5;
+        font-weight: 700;
+        background: white;
+        padding: 16px 24px;
+        border-radius: 8px;
+        display: inline-block;
+        margin: 16px 0;
+        border: 1px solid #e2e8f0;
+      }
+
+      .expiry-text {
+        color: #64748b;
+        font-size: 14px;
+        margin-top: 16px;
+      }
+
+      .warning {
+        background-color: #fff8f1;
+        border-left: 4px solid #f97316;
+        padding: 16px;
+        margin: 24px 0;
+        border-radius: 4px;
+        font-size: 14px;
+        color: #9a3412;
+      }
+
       .footer {
         text-align: center;
-        font-size: 12px;
-        color: #888888;
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid #e2e8f0;
+        color: #64748b;
+        font-size: 14px;
+      }
+
+      .social-links {
         margin-top: 20px;
+        text-align: center;
+      }
+
+      .social-links a {
+        color: #4f46e5;
+        text-decoration: none;
+        margin: 0 8px;
+        font-size: 14px;
+      }
+
+      @media only screen and (max-width: 600px) {
+        body {
+          padding: 10px;
+        }
+
+        .content {
+          padding: 20px;
+        }
+
+        .otp-code {
+          font-size: 24px;
+          letter-spacing: 6px;
+        }
+
+        .header {
+          padding: 30px 15px;
+        }
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1>Your OTP Code</h1>
-      <p>Hello,</p>
-      <p>
-        We received a request to send you a One-Time Password (OTP) for
-        verification.
-      </p>
-      <p class="otp-code">{{otp}}</p>
-      <p>This code will expire in 10 minutes.</p>
-      <p>If you did not request this, please ignore this email.</p>
-      <p class="footer">Thank you for using our service.</p>
+    <div class="email-container">
+      <div class="header">
+        <div class="header-overlay"></div>
+        <div class="logo-container">
+          <div class="logo">
+            <img src="/api/placeholder/120/40" alt="SwiftSell Logo" />
+          </div>
+        </div>
+        <div class="header-text">Email Verification</div>
+      </div>
+
+      <div class="content">
+        <h1>Verify Your Email Address</h1>
+
+        <p class="greeting">Hello {{name}},</p>
+
+        <p class="message">
+          To complete your email verification for your SwiftSell account, please
+          use the following One-Time Password (OTP). This code will help ensure
+          the security of your account.
+        </p>
+
+        <div class="otp-container">
+          <div class="otp-code">{{otp}}</div>
+          <p class="expiry-text">This code will expire in 10 minutes</p>
+        </div>
+
+        <div class="warning">
+          If you didn't request this code, please ignore this email. Someone
+          might have entered your email address by mistake.
+        </div>
+
+        <div class="footer">
+          <p>Need help? Contact SwiftSell support team</p>
+          <div class="social-links">
+            <a href="#">Twitter</a> • <a href="#">Facebook</a> •
+            <a href="#">Instagram</a>
+          </div>
+          <p style="margin-top: 20px">© 2025 SwiftSell. All rights reserved.</p>
+        </div>
+      </div>
     </div>
   </body>
 </html>
+
+Version 2 o
