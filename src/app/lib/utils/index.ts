@@ -13,8 +13,8 @@ export const sendOtpEmail = async (email: string, otp: string) => {
     port: 587,
     secure: config.NODE_ENV === "production",
     auth: {
-      user: config.email_pass,
-      pass: config.email_pass,
+      user: "hire.developerjunaid@gmail.com", // Your Gmail address
+      pass: "htzg ivoj sahv irad", // Your Gmail password or app-specific password
     },
   });
 
