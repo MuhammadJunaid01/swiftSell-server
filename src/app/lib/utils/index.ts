@@ -1,10 +1,10 @@
+import bcrypt from "bcryptjs";
 import crypto from "crypto";
-import ejs from "ejs";
-import fs from "fs";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import path from "path";
 import config from "../../config";
+
 import { Role } from "../../modules/user/user.interface";
 import User from "../../modules/user/user.model";
 const templatePath = path.resolve(__dirname, "../../builder/otpTemplate.html");
@@ -337,4 +337,14 @@ export const generateRefreshToken = async (userId: string): Promise<string> => {
   await User.findByIdAndUpdate(userId, { refreshToken });
 
   return refreshToken;
+};
+export const hashPassword = async (password: string): Promise<string> => {
+  const saltRounds = 10; // Adjust the number of rounds for hashing complexity
+  return bcrypt.hash(password, saltRounds);
+};
+export const verifyPassword = async (
+  password: string,
+  hashedPassword: string
+): Promise<boolean> => {
+  return bcrypt.compare(password, hashedPassword);
 };

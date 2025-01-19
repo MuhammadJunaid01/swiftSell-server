@@ -19,6 +19,7 @@ const createSubCategory = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllSubCategories = catchAsync(async (req: Request, res: Response) => {
+  console.log("HEY");
   const response = await SubCategoryServices.getAllSubCategoriesFromDB();
   sendResponse(res, {
     message: "Fetched all subcategories successfully.",

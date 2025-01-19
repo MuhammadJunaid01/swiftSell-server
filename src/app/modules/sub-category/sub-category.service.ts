@@ -11,8 +11,9 @@ export const createSubCategoryIntoDB = async (
   await subCategory.save();
   return subCategory;
 };
+
 export const getAllSubCategoriesFromDB = async () => {
-  return await SubCategory.find().populate("category", "name").exec();
+  return await SubCategory.find().populate("category");
 };
 export const getSubCategoriesByCategoryFromDB = async (categoryId: string) => {
   return await SubCategory.find({ category: categoryId }).exec();

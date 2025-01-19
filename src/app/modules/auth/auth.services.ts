@@ -7,6 +7,7 @@ import {
   generateAccessToken,
   generateOtp,
   generateRefreshToken,
+  hashPassword,
   sendOtpEmail,
 } from "../../lib/utils";
 import { IUser, Role } from "../user/user.interface";
@@ -29,12 +30,12 @@ const registerUserIntoDB = async (user: IUser) => {
     // Generate OTP and set expiration
     const otp = generateOtp();
     const otpExpiration = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
-
-    // Create new user
+    const hashedPassword = await hashPassword(password); // Create new user
+    console.log("hashedPassword", hashPassword);
     const newUser = new User({
       name,
       email,
-      password, // Ensure you hash the password before saving
+      password: hashedPassword, // Ensure you hash the password before saving
       gender,
       otp,
       otpExpiration,
@@ -119,7 +120,7 @@ const loginUserIntoDB = async (email: string, password: string) => {
       httpStatus.UNAUTHORIZED
     );
   }
-
+  console.log("user.password", user.password);
   // Compare passwords
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
