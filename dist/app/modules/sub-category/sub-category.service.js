@@ -24,7 +24,7 @@ const createSubCategoryIntoDB = (categoryId, name) => __awaiter(void 0, void 0, 
 });
 exports.createSubCategoryIntoDB = createSubCategoryIntoDB;
 const getAllSubCategoriesFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
-    return yield sub_category_model_1.default.find().populate("category", "name").exec();
+    return yield sub_category_model_1.default.find().populate("category");
 });
 exports.getAllSubCategoriesFromDB = getAllSubCategoriesFromDB;
 const getSubCategoriesByCategoryFromDB = (categoryId) => __awaiter(void 0, void 0, void 0, function* () {

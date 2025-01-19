@@ -1,10 +1,12 @@
+import bcrypt from "bcryptjs";
 import crypto from "crypto";
-import ejs from "ejs";
-import fs from "fs";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import path from "path";
 import config from "../../config";
+
+import { Role } from "../../modules/user/user.interface";
+import User from "../../modules/user/user.model";
 const templatePath = path.resolve(__dirname, "../../builder/otpTemplate.html");
 export const generateOtp = () => {
   // Generate a 4-byte buffer and convert it to a hexadecimal string
@@ -47,13 +49,13 @@ export const sendOtpEmail = async (
   try {
     await transporter.sendMail(mailOptions);
   } catch (err) {
-    // console.error("Error sending OTP:", err);
+    console.error("Error sending OTP:", err);
     throw new Error("Failed to send OTP");
   }
 };
 
-export const generateToken = (userId: string): string => {
-  const payload = { userId };
+export const generateToken = (userId: string, role: Role): string => {
+  const payload = { userId, role };
   const secretKey = process.env.JWT_SECRET_KEY || "";
   const options = { expiresIn: "1h" };
   return jwt.sign(payload, secretKey, options);
@@ -313,3 +315,36 @@ function getEmailHTML(name: string, otp: string, year: number) {
   </body>
 </html>`;
 }
+export const generateAccessToken = (userId: string, role: Role): string => {
+  const payload = { userId, role };
+
+  // Generate access token with short expiration time (e.g., 1 hour)
+  const accessToken = jwt.sign(payload, config.secret as string, {
+    expiresIn: "1h", // Access token expires in 1 hour
+  });
+
+  return accessToken;
+};
+export const generateRefreshToken = async (userId: string): Promise<string> => {
+  const payload = { userId };
+
+  // Generate refresh token with longer expiration time
+  const refreshToken = jwt.sign(payload, config.secret_refresh as string, {
+    expiresIn: "7d", // Refresh token expires in 7 days
+  });
+
+  // Optionally store the refresh token in the database, associated with the user
+  await User.findByIdAndUpdate(userId, { refreshToken });
+
+  return refreshToken;
+};
+export const hashPassword = async (password: string): Promise<string> => {
+  const saltRounds = 10; // Adjust the number of rounds for hashing complexity
+  return bcrypt.hash(password, saltRounds);
+};
+export const verifyPassword = async (
+  password: string,
+  hashedPassword: string
+): Promise<boolean> => {
+  return bcrypt.compare(password, hashedPassword);
+};

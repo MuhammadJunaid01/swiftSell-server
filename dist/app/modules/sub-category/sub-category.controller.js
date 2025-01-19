@@ -28,6 +28,7 @@ const createSubCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void
     });
 }));
 const getAllSubCategories = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("HEY");
     const response = yield sub_category_service_1.SubCategoryServices.getAllSubCategoriesFromDB();
     (0, sendResponse_1.default)(res, {
         message: "Fetched all subcategories successfully.",
@@ -37,7 +38,7 @@ const getAllSubCategories = (0, catchAsync_1.default)((req, res) => __awaiter(vo
     });
 }));
 const getSubCategoriesByCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { categoryId } = req.body;
+    const { categoryId } = req.params;
     const response = yield sub_category_service_1.SubCategoryServices.getSubCategoriesByCategoryFromDB(categoryId);
     (0, sendResponse_1.default)(res, {
         message: "Fetched subcategories for the specified category successfully.",

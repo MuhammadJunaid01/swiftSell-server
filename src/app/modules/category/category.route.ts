@@ -1,10 +1,19 @@
 import { Router } from "express";
+import authGuard from "../../middlewares/authMiddleware";
+import { validateRequest } from "../../middlewares/validateRequest";
+import { Role } from "../user/user.interface";
 import { CategoryControllers } from "./category.controller";
+import { categoryValidation } from "./category.validation.schema";
 
 const router = Router();
 
 // Route to create a new category
-router.post("/", CategoryControllers.createCategory);
+router.post(
+  "/",
+  authGuard(Role.Admin),
+  validateRequest(categoryValidation),
+  CategoryControllers.createCategory
+);
 
 // Route to fetch all categories
 router.get("/", CategoryControllers.getAllCategories);

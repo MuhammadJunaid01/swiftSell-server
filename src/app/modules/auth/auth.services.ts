@@ -1,13 +1,20 @@
 import bcrypt from "bcryptjs";
 import httpStatus from "http-status";
+import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { AppError } from "../../errors/globalError";
-import { generateOtp, generateToken, sendOtpEmail } from "../../lib/utils";
-import { IUser } from "../user/user.interface";
+import {
+  generateAccessToken,
+  generateOtp,
+  generateRefreshToken,
+  hashPassword,
+  sendOtpEmail,
+} from "../../lib/utils";
+import { IUser, Role } from "../user/user.interface";
 import User from "../user/user.model";
 
 const registerUserIntoDB = async (user: IUser) => {
-  const { name, email, password, gender } = user;
+  const { name, email, password, gender, role } = user;
 
   // Start a Mongoose session
   const session = await mongoose.startSession();
@@ -23,28 +30,29 @@ const registerUserIntoDB = async (user: IUser) => {
     // Generate OTP and set expiration
     const otp = generateOtp();
     const otpExpiration = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
-
-    // Create new user
+    const hashedPassword = await hashPassword(password); // Create new user
     const newUser = new User({
       name,
       email,
-      password, // Ensure you hash the password before saving
+      password: hashedPassword, // Ensure you hash the password before saving
       gender,
       otp,
       otpExpiration,
       isVerified: false,
+      role: Role.Admin,
     });
 
     // Save the new user within the transaction
     await newUser.save({ session });
 
     // Send OTP to user's email
-    await sendOtpEmail(email, otp, user.name);
+    await sendOtpEmail(newUser?.email, otp, newUser.name);
 
     // Commit the transaction
     await session.commitTransaction();
     return "User registered. Please verify your email.";
   } catch (error) {
+    console.log("err", error);
     // Abort the transaction in case of an error
     await session.abortTransaction();
     if (error instanceof AppError) {
@@ -83,12 +91,18 @@ const verifyOtpIntoDB = async (email: string, otp: string) => {
   user.otp = undefined;
   user.otpExpiration = undefined;
   await user.save();
-  const token = generateToken((user as any)?._id.toString() as string);
+  const accessToken = generateAccessToken(
+    (user as any)?._id.toString(),
+    user.role
+  );
+  const refreshToken = await generateRefreshToken((user as any)?._id);
   return {
-    token,
+    accessToken,
+    refreshToken,
     user: user.toJSON(),
   };
 };
+
 const loginUserIntoDB = async (email: string, password: string) => {
   // Find user by email
   const user: IUser | null = await User.findOne({ email });
@@ -105,26 +119,52 @@ const loginUserIntoDB = async (email: string, password: string) => {
       httpStatus.UNAUTHORIZED
     );
   }
-
+  console.log("user.password", user.password);
   // Compare passwords
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
     throw new AppError("Invalid credentials", httpStatus.UNAUTHORIZED);
   }
-
-  // Generate token
-  const token = generateToken((user as any)?._id.toString());
+  // Generate tokens after login
+  const accessToken = generateAccessToken((user as any)?._id, user?.role);
+  const refreshToken = await generateRefreshToken((user as any)?._id);
 
   // Return user without password
   const { password: _, ...userWithoutPassword } = user.toObject();
   return {
-    token,
+    accessToken,
+    refreshToken,
     user: userWithoutPassword,
   };
 };
+const refreshAccessToken = async (refreshToken: string) => {
+  if (!refreshToken) {
+    throw new AppError("Refresh token is required", 400);
+  }
 
+  let decoded;
+  try {
+    decoded = jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_TOKEN_SECRET as string
+    );
+  } catch (error) {
+    throw new AppError("Invalid or expired refresh token", 401);
+  }
+
+  const { userId } = decoded as jwt.JwtPayload;
+  const user = await User.findById(userId);
+  if (!user || user.refreshToken !== refreshToken) {
+    throw new AppError("Invalid or expired refresh token", 401);
+  }
+
+  // Generate new access token
+  const newAccessToken = generateAccessToken((user as any)?._id, user.role);
+  return newAccessToken;
+};
 export const AuthServices = {
   registerUserIntoDB,
   verifyOtpIntoDB,
   loginUserIntoDB,
+  refreshAccessToken,
 };

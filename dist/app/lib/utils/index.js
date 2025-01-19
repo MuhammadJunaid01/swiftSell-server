@@ -12,12 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateToken = exports.sendOtpEmail = exports.generateOtp = void 0;
+exports.verifyPassword = exports.hashPassword = exports.generateRefreshToken = exports.generateAccessToken = exports.generateToken = exports.sendOtpEmail = exports.generateOtp = void 0;
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const crypto_1 = __importDefault(require("crypto"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const path_1 = __importDefault(require("path"));
 const config_1 = __importDefault(require("../../config"));
+const user_model_1 = __importDefault(require("../../modules/user/user.model"));
 const templatePath = path_1.default.resolve(__dirname, "../../builder/otpTemplate.html");
 const generateOtp = () => {
     // Generate a 4-byte buffer and convert it to a hexadecimal string
@@ -52,13 +54,13 @@ const sendOtpEmail = (email, otp, name) => __awaiter(void 0, void 0, void 0, fun
         yield transporter.sendMail(mailOptions);
     }
     catch (err) {
-        // console.error("Error sending OTP:", err);
+        console.error("Error sending OTP:", err);
         throw new Error("Failed to send OTP");
     }
 });
 exports.sendOtpEmail = sendOtpEmail;
-const generateToken = (userId) => {
-    const payload = { userId };
+const generateToken = (userId, role) => {
+    const payload = { userId, role };
     const secretKey = process.env.JWT_SECRET_KEY || "";
     const options = { expiresIn: "1h" };
     return jsonwebtoken_1.default.sign(payload, secretKey, options);
@@ -319,3 +321,32 @@ function getEmailHTML(name, otp, year) {
   </body>
 </html>`;
 }
+const generateAccessToken = (userId, role) => {
+    const payload = { userId, role };
+    // Generate access token with short expiration time (e.g., 1 hour)
+    const accessToken = jsonwebtoken_1.default.sign(payload, config_1.default.secret, {
+        expiresIn: "1h", // Access token expires in 1 hour
+    });
+    return accessToken;
+};
+exports.generateAccessToken = generateAccessToken;
+const generateRefreshToken = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    const payload = { userId };
+    // Generate refresh token with longer expiration time
+    const refreshToken = jsonwebtoken_1.default.sign(payload, config_1.default.secret_refresh, {
+        expiresIn: "7d", // Refresh token expires in 7 days
+    });
+    // Optionally store the refresh token in the database, associated with the user
+    yield user_model_1.default.findByIdAndUpdate(userId, { refreshToken });
+    return refreshToken;
+});
+exports.generateRefreshToken = generateRefreshToken;
+const hashPassword = (password) => __awaiter(void 0, void 0, void 0, function* () {
+    const saltRounds = 10; // Adjust the number of rounds for hashing complexity
+    return bcryptjs_1.default.hash(password, saltRounds);
+});
+exports.hashPassword = hashPassword;
+const verifyPassword = (password, hashedPassword) => __awaiter(void 0, void 0, void 0, function* () {
+    return bcryptjs_1.default.compare(password, hashedPassword);
+});
+exports.verifyPassword = verifyPassword;
