@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import path from "path";
 import config from "../../config";
+import User from "../../modules/user/user.model";
 const templatePath = path.resolve(__dirname, "../../builder/otpTemplate.html");
 export const generateOtp = () => {
   // Generate a 4-byte buffer and convert it to a hexadecimal string
@@ -313,3 +314,26 @@ function getEmailHTML(name: string, otp: string, year: number) {
   </body>
 </html>`;
 }
+export const generateAccessToken = (userId: string): string => {
+  const payload = { userId };
+
+  // Generate access token with short expiration time (e.g., 1 hour)
+  const accessToken = jwt.sign(payload, config.secret as string, {
+    expiresIn: "1h", // Access token expires in 1 hour
+  });
+
+  return accessToken;
+};
+export const generateRefreshToken = async (userId: string): Promise<string> => {
+  const payload = { userId };
+
+  // Generate refresh token with longer expiration time
+  const refreshToken = jwt.sign(payload, config.secret_refresh as string, {
+    expiresIn: "7d", // Refresh token expires in 7 days
+  });
+
+  // Optionally store the refresh token in the database, associated with the user
+  await User.findByIdAndUpdate(userId, { refreshToken });
+
+  return refreshToken;
+};

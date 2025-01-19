@@ -1,8 +1,15 @@
 import bcrypt from "bcryptjs";
 import httpStatus from "http-status";
+import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { AppError } from "../../errors/globalError";
-import { generateOtp, generateToken, sendOtpEmail } from "../../lib/utils";
+import {
+  generateAccessToken,
+  generateOtp,
+  generateRefreshToken,
+  generateToken,
+  sendOtpEmail,
+} from "../../lib/utils";
 import { IUser } from "../user/user.interface";
 import User from "../user/user.model";
 
@@ -83,12 +90,15 @@ const verifyOtpIntoDB = async (email: string, otp: string) => {
   user.otp = undefined;
   user.otpExpiration = undefined;
   await user.save();
-  const token = generateToken((user as any)?._id.toString() as string);
+  const accessToken = generateAccessToken((user as any)?._id.toString());
+  const refreshToken = await generateRefreshToken((user as any)?._id);
   return {
-    token,
+    accessToken,
+    refreshToken,
     user: user.toJSON(),
   };
 };
+
 const loginUserIntoDB = async (email: string, password: string) => {
   // Find user by email
   const user: IUser | null = await User.findOne({ email });
@@ -111,20 +121,46 @@ const loginUserIntoDB = async (email: string, password: string) => {
   if (!isMatch) {
     throw new AppError("Invalid credentials", httpStatus.UNAUTHORIZED);
   }
-
-  // Generate token
-  const token = generateToken((user as any)?._id.toString());
+  // Generate tokens after login
+  const accessToken = generateAccessToken((user as any)?._id);
+  const refreshToken = await generateRefreshToken((user as any)?._id);
 
   // Return user without password
   const { password: _, ...userWithoutPassword } = user.toObject();
   return {
-    token,
+    accessToken,
+    refreshToken,
     user: userWithoutPassword,
   };
 };
+const refreshAccessToken = async (refreshToken: string) => {
+  if (!refreshToken) {
+    throw new AppError("Refresh token is required", 400);
+  }
 
+  let decoded;
+  try {
+    decoded = jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_TOKEN_SECRET as string
+    );
+  } catch (error) {
+    throw new AppError("Invalid or expired refresh token", 401);
+  }
+
+  const { userId } = decoded as jwt.JwtPayload;
+  const user = await User.findById(userId);
+  if (!user || user.refreshToken !== refreshToken) {
+    throw new AppError("Invalid or expired refresh token", 401);
+  }
+
+  // Generate new access token
+  const newAccessToken = generateAccessToken((user as any)?._id);
+  return newAccessToken;
+};
 export const AuthServices = {
   registerUserIntoDB,
   verifyOtpIntoDB,
   loginUserIntoDB,
+  refreshAccessToken,
 };

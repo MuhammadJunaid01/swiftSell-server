@@ -15,6 +15,7 @@ const userSchema = new Schema<IUser>(
     password: { type: String, required: true },
     isVerified: { type: Boolean, default: false },
     pushToken: { type: String },
+    refreshToken: { type: String }, // For storing refresh token
   },
   { timestamps: true } // Automatically adds `createdAt` and `updatedAt`
 );

@@ -23,4 +23,5 @@ export interface IUser extends Document {
   pushToken?: string; // Device token for push notifications
   createdAt?: Date; // Optional: Timestamp for user creation
   updatedAt?: Date; // Optional: Timestamp for user updates
+  refreshToken: string;
 }

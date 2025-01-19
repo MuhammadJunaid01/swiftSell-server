@@ -13,4 +13,6 @@ export default {
   secret_refresh: process.env.SECRET_REFRESH,
   email_user: process.env.EMAIL_USER,
   email_pass: process.env.EMAIL_PASS,
+  accessTokenExpiration: process.env.accessTokenExpiration,
+  refreshTokenExpiration: process.env.refreshTokenExpiration,
 };
