@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import path from "path";
 import config from "../../config";
+import { Role } from "../../modules/user/user.interface";
 import User from "../../modules/user/user.model";
 const templatePath = path.resolve(__dirname, "../../builder/otpTemplate.html");
 export const generateOtp = () => {
@@ -48,13 +49,13 @@ export const sendOtpEmail = async (
   try {
     await transporter.sendMail(mailOptions);
   } catch (err) {
-    // console.error("Error sending OTP:", err);
+    console.error("Error sending OTP:", err);
     throw new Error("Failed to send OTP");
   }
 };
 
-export const generateToken = (userId: string): string => {
-  const payload = { userId };
+export const generateToken = (userId: string, role: Role): string => {
+  const payload = { userId, role };
   const secretKey = process.env.JWT_SECRET_KEY || "";
   const options = { expiresIn: "1h" };
   return jwt.sign(payload, secretKey, options);
@@ -314,8 +315,8 @@ function getEmailHTML(name: string, otp: string, year: number) {
   </body>
 </html>`;
 }
-export const generateAccessToken = (userId: string): string => {
-  const payload = { userId };
+export const generateAccessToken = (userId: string, role: Role): string => {
+  const payload = { userId, role };
 
   // Generate access token with short expiration time (e.g., 1 hour)
   const accessToken = jwt.sign(payload, config.secret as string, {

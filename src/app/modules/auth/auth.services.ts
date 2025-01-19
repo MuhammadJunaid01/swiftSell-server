@@ -7,14 +7,13 @@ import {
   generateAccessToken,
   generateOtp,
   generateRefreshToken,
-  generateToken,
   sendOtpEmail,
 } from "../../lib/utils";
-import { IUser } from "../user/user.interface";
+import { IUser, Role } from "../user/user.interface";
 import User from "../user/user.model";
 
 const registerUserIntoDB = async (user: IUser) => {
-  const { name, email, password, gender } = user;
+  const { name, email, password, gender, role } = user;
 
   // Start a Mongoose session
   const session = await mongoose.startSession();
@@ -40,18 +39,20 @@ const registerUserIntoDB = async (user: IUser) => {
       otp,
       otpExpiration,
       isVerified: false,
+      role: Role.Admin,
     });
 
     // Save the new user within the transaction
     await newUser.save({ session });
 
     // Send OTP to user's email
-    await sendOtpEmail(email, otp, user.name);
+    await sendOtpEmail(newUser?.email, otp, newUser.name);
 
     // Commit the transaction
     await session.commitTransaction();
     return "User registered. Please verify your email.";
   } catch (error) {
+    console.log("err", error);
     // Abort the transaction in case of an error
     await session.abortTransaction();
     if (error instanceof AppError) {
@@ -90,7 +91,10 @@ const verifyOtpIntoDB = async (email: string, otp: string) => {
   user.otp = undefined;
   user.otpExpiration = undefined;
   await user.save();
-  const accessToken = generateAccessToken((user as any)?._id.toString());
+  const accessToken = generateAccessToken(
+    (user as any)?._id.toString(),
+    user.role
+  );
   const refreshToken = await generateRefreshToken((user as any)?._id);
   return {
     accessToken,
@@ -122,7 +126,7 @@ const loginUserIntoDB = async (email: string, password: string) => {
     throw new AppError("Invalid credentials", httpStatus.UNAUTHORIZED);
   }
   // Generate tokens after login
-  const accessToken = generateAccessToken((user as any)?._id);
+  const accessToken = generateAccessToken((user as any)?._id, user?.role);
   const refreshToken = await generateRefreshToken((user as any)?._id);
 
   // Return user without password
@@ -155,7 +159,7 @@ const refreshAccessToken = async (refreshToken: string) => {
   }
 
   // Generate new access token
-  const newAccessToken = generateAccessToken((user as any)?._id);
+  const newAccessToken = generateAccessToken((user as any)?._id, user.role);
   return newAccessToken;
 };
 export const AuthServices = {

@@ -7,7 +7,13 @@ export enum Gender {
   Other = "Other",
   PreferNotToSay = "PreferNotToSay",
 }
-
+export enum Role {
+  Admin = "admin",
+  User = "user",
+  Manager = "manager",
+  Support = "support",
+  Analyst = "analyst",
+}
 // IUser interface definition
 export interface IUser extends Document {
   name: string;
@@ -24,4 +30,5 @@ export interface IUser extends Document {
   createdAt?: Date; // Optional: Timestamp for user creation
   updatedAt?: Date; // Optional: Timestamp for user updates
   refreshToken: string;
+  role: Role;
 }

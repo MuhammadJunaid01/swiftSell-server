@@ -26,12 +26,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthServices = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const http_status_1 = __importDefault(require("http-status"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const globalError_1 = require("../../errors/globalError");
 const utils_1 = require("../../lib/utils");
+const user_interface_1 = require("../user/user.interface");
 const user_model_1 = __importDefault(require("../user/user.model"));
 const registerUserIntoDB = (user) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, email, password, gender } = user;
+    const { name, email, password, gender, role } = user;
     // Start a Mongoose session
     const session = yield mongoose_1.default.startSession();
     session.startTransaction();
@@ -53,16 +55,18 @@ const registerUserIntoDB = (user) => __awaiter(void 0, void 0, void 0, function*
             otp,
             otpExpiration,
             isVerified: false,
+            role: user_interface_1.Role.Admin,
         });
         // Save the new user within the transaction
         yield newUser.save({ session });
         // Send OTP to user's email
-        yield (0, utils_1.sendOtpEmail)(email, otp, user.name);
+        yield (0, utils_1.sendOtpEmail)(newUser === null || newUser === void 0 ? void 0 : newUser.email, otp, newUser.name);
         // Commit the transaction
         yield session.commitTransaction();
         return "User registered. Please verify your email.";
     }
     catch (error) {
+        console.log("err", error);
         // Abort the transaction in case of an error
         yield session.abortTransaction();
         if (error instanceof globalError_1.AppError) {
@@ -97,9 +101,11 @@ const verifyOtpIntoDB = (email, otp) => __awaiter(void 0, void 0, void 0, functi
     user.otp = undefined;
     user.otpExpiration = undefined;
     yield user.save();
-    const token = (0, utils_1.generateToken)(user === null || user === void 0 ? void 0 : user._id.toString());
+    const accessToken = (0, utils_1.generateAccessToken)(user === null || user === void 0 ? void 0 : user._id.toString(), user.role);
+    const refreshToken = yield (0, utils_1.generateRefreshToken)(user === null || user === void 0 ? void 0 : user._id);
     return {
-        token,
+        accessToken,
+        refreshToken,
         user: user.toJSON(),
     };
 });
@@ -120,17 +126,40 @@ const loginUserIntoDB = (email, password) => __awaiter(void 0, void 0, void 0, f
     if (!isMatch) {
         throw new globalError_1.AppError("Invalid credentials", http_status_1.default.UNAUTHORIZED);
     }
-    // Generate token
-    const token = (0, utils_1.generateToken)(user === null || user === void 0 ? void 0 : user._id.toString());
+    // Generate tokens after login
+    const accessToken = (0, utils_1.generateAccessToken)(user === null || user === void 0 ? void 0 : user._id, user === null || user === void 0 ? void 0 : user.role);
+    const refreshToken = yield (0, utils_1.generateRefreshToken)(user === null || user === void 0 ? void 0 : user._id);
     // Return user without password
     const _a = user.toObject(), { password: _ } = _a, userWithoutPassword = __rest(_a, ["password"]);
     return {
-        token,
+        accessToken,
+        refreshToken,
         user: userWithoutPassword,
     };
+});
+const refreshAccessToken = (refreshToken) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!refreshToken) {
+        throw new globalError_1.AppError("Refresh token is required", 400);
+    }
+    let decoded;
+    try {
+        decoded = jsonwebtoken_1.default.verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET);
+    }
+    catch (error) {
+        throw new globalError_1.AppError("Invalid or expired refresh token", 401);
+    }
+    const { userId } = decoded;
+    const user = yield user_model_1.default.findById(userId);
+    if (!user || user.refreshToken !== refreshToken) {
+        throw new globalError_1.AppError("Invalid or expired refresh token", 401);
+    }
+    // Generate new access token
+    const newAccessToken = (0, utils_1.generateAccessToken)(user === null || user === void 0 ? void 0 : user._id, user.role);
+    return newAccessToken;
 });
 exports.AuthServices = {
     registerUserIntoDB,
     verifyOtpIntoDB,
     loginUserIntoDB,
+    refreshAccessToken,
 };
