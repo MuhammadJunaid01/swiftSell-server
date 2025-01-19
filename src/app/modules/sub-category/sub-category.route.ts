@@ -22,7 +22,10 @@ router.get(
 );
 
 // Route to get subcategories by category
-router.post("/by-category", SubCategoryControllers.getSubCategoriesByCategory);
+router.get(
+  "/by-category/:categoryId",
+  SubCategoryControllers.getSubCategoriesByCategory
+);
 
 // Route to update a subcategory
 router.put("/:id", SubCategoryControllers.updateSubCategory);

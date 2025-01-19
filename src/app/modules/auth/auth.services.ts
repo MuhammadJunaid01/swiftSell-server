@@ -31,7 +31,6 @@ const registerUserIntoDB = async (user: IUser) => {
     const otp = generateOtp();
     const otpExpiration = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
     const hashedPassword = await hashPassword(password); // Create new user
-    console.log("hashedPassword", hashPassword);
     const newUser = new User({
       name,
       email,
