@@ -12,63 +12,64 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProductControllers = void 0;
+exports.SubCategoryControllers = void 0;
 const http_status_1 = __importDefault(require("http-status"));
 const catchAsync_1 = __importDefault(require("../../lib/utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../lib/utils/sendResponse"));
-const product_service_1 = require("./product.service");
-const createProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield product_service_1.ProductServices.createProduct(req.body);
+const sub_category_service_1 = require("./sub-category.service");
+const createSubCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { categoryId, name } = req.body;
+    const response = yield sub_category_service_1.SubCategoryServices.createSubCategoryIntoDB(categoryId, name);
     (0, sendResponse_1.default)(res, {
-        message: "Product created successfully",
+        message: "Subcategory created successfully.",
         success: true,
         data: response,
         statusCode: http_status_1.default.CREATED,
     });
 }));
-const getAllProducts = (0, catchAsync_1.default)((_req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield product_service_1.ProductServices.getAllProducts();
+const getAllSubCategories = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield sub_category_service_1.SubCategoryServices.getAllSubCategoriesFromDB();
     (0, sendResponse_1.default)(res, {
-        message: "Products fetched successfully",
+        message: "Fetched all subcategories successfully.",
         success: true,
         data: response,
         statusCode: http_status_1.default.OK,
     });
 }));
-const getProductById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getSubCategoriesByCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { categoryId } = req.body;
+    const response = yield sub_category_service_1.SubCategoryServices.getSubCategoriesByCategoryFromDB(categoryId);
+    (0, sendResponse_1.default)(res, {
+        message: "Fetched subcategories for the specified category successfully.",
+        success: true,
+        data: response,
+        statusCode: http_status_1.default.OK,
+    });
+}));
+const updateSubCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id, name } = req.body;
+    const response = yield sub_category_service_1.SubCategoryServices.updateSubCategoryIntoDB(id, name);
+    (0, sendResponse_1.default)(res, {
+        message: "Subcategory updated successfully.",
+        success: true,
+        data: response,
+        statusCode: http_status_1.default.OK,
+    });
+}));
+const deleteSubCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const response = yield product_service_1.ProductServices.getProductById(id);
+    const response = yield sub_category_service_1.SubCategoryServices.deleteSubCategoryIntoDB(id);
     (0, sendResponse_1.default)(res, {
-        message: "Product fetched successfully",
+        message: "Subcategory deleted successfully.",
         success: true,
         data: response,
         statusCode: http_status_1.default.OK,
     });
 }));
-const updateProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id } = req.params;
-    const response = yield product_service_1.ProductServices.updateProduct(id, req.body);
-    (0, sendResponse_1.default)(res, {
-        message: "Product updated successfully",
-        success: true,
-        data: response,
-        statusCode: http_status_1.default.OK,
-    });
-}));
-const deleteProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id } = req.params;
-    const response = yield product_service_1.ProductServices.deleteProduct(id);
-    (0, sendResponse_1.default)(res, {
-        message: "Product deleted successfully",
-        success: true,
-        data: response,
-        statusCode: http_status_1.default.OK,
-    });
-}));
-exports.ProductControllers = {
-    createProduct,
-    getAllProducts,
-    getProductById,
-    updateProduct,
-    deleteProduct,
+exports.SubCategoryControllers = {
+    createSubCategory,
+    getAllSubCategories,
+    getSubCategoriesByCategory,
+    updateSubCategory,
+    deleteSubCategory,
 };

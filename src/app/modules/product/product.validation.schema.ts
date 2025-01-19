@@ -1,6 +1,5 @@
 // productSchemas.ts
 import { z } from "zod";
-import { CategoryType } from "./product.interface";
 
 export const subCategorySchema = z.object({
   name: z.string(),
@@ -35,7 +34,7 @@ export const productSchema = z.object({
   name: z.string(),
   description: z.string(),
   price: z.number(),
-  category: z.enum(Object.values(CategoryType) as [string, ...string[]]),
+  category: z.string(),
   subCategory: subCategorySchema.optional(),
   images: z.array(z.string()).optional(),
   thumbnail: z.string(),

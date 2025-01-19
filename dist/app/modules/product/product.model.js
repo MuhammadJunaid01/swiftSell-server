@@ -32,42 +32,47 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Product = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const ProductSchema = new mongoose_1.Schema({
-    name: { type: String, required: true },
+    name: { type: String, required: true, trim: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },
-    category: {
-        type: String,
-        required: true,
-        enum: ["fashion", "electronics", "appliances", "beauty", "furniture"],
-    },
-    subCategory: {
-        name: { type: String },
-        description: { type: String },
-    },
+    category: { type: mongoose_1.Schema.Types.ObjectId, ref: "Category", required: true },
+    subCategory: { type: mongoose_1.Schema.Types.ObjectId, ref: "SubCategory" },
     images: { type: [String], required: true },
-    ratings: { type: Number, required: true },
+    averageRating: { type: Number, default: 0, min: 0, max: 5 },
+    reviewCount: { type: Number, default: 0 },
     reviews: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: "Review" }],
     discount: {
         type: {
-            type: { type: String, enum: ["percentage", "fixed"] },
-            value: { type: Number },
-            validFrom: { type: Date },
-            validTo: { type: Date },
+            type: { type: String, enum: ["percentage", "fixed"], required: true },
+            value: { type: Number, required: true },
+            validFrom: { type: Date, required: true },
+            validTo: { type: Date, required: true },
         },
-        required: false,
     },
     inventory: {
         stock: { type: Number, required: true },
-        sku: { type: String, required: true },
+        reservedStock: { type: Number, default: 0 },
+        sku: { type: String, required: true, unique: true },
         warehouseLocation: { type: String },
     },
-    isDeal: { type: Boolean, required: true },
-    dealType: { type: String, enum: ["day", "week", "month"], required: false },
+    isDeal: { type: Boolean, default: false },
+    dealType: { type: String, enum: ["day", "week", "month"] },
     dealExpiry: { type: Date },
-    tags: { type: [String] },
+    tags: { type: [String], default: [] },
+    searchableTags: { type: [String], default: [] },
     shippingDetails: {
         weight: { type: Number, required: true },
         dimensions: {
@@ -82,7 +87,46 @@ const ProductSchema = new mongoose_1.Schema({
         },
         deliveryEstimate: { type: String, required: true },
     },
-    isActive: { type: Boolean, required: true },
+    views: { type: Number, default: 0 },
+    isActive: { type: Boolean, default: true },
+    metaTitle: { type: String, trim: true },
+    metaDescription: { type: String, trim: true },
+    deletedAt: { type: Date, default: null },
 }, { timestamps: true });
-const Product = mongoose_1.default.model("Product", ProductSchema);
-exports.default = Product;
+// Middleware to validate category existence
+ProductSchema.pre("save", function (next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const categoryExists = yield mongoose_1.default.models.Category.findById(this.category);
+        if (!categoryExists) {
+            throw new Error("Invalid category ID");
+        }
+        next();
+    });
+});
+// Middleware to generate a unique product ID
+function generateUniqueProductId() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const productId = Math.floor(10000000 + Math.random() * 90000000).toString();
+        const existingProduct = yield mongoose_1.default.models.Product.findOne({
+            id: productId,
+        });
+        if (existingProduct) {
+            return generateUniqueProductId();
+        }
+        return productId;
+    });
+}
+ProductSchema.pre("save", function (next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!this.id) {
+            this.id = yield generateUniqueProductId();
+        }
+        next();
+    });
+});
+// Soft delete and filtering for active products
+ProductSchema.pre(/^find/, function (next) {
+    this.where({ isActive: true });
+    next();
+});
+exports.Product = (0, mongoose_1.model)("Product", ProductSchema);

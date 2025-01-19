@@ -1,5 +1,6 @@
 import { Request, Router } from "express";
 import { JwtPayload } from "jsonwebtoken";
+import { IUser } from "../modules/user/user.interface";
 
 export type TErrorReturnType = {
   statusCode: number;
@@ -11,8 +12,9 @@ export type TErrorSource = {
   path: string | number;
   message: string;
 };
+
 export interface CustomRequest extends Request {
-  user: JwtPayload;
+  user: JwtPayload & IUser;
 }
 export interface IRoute {
   path: string;

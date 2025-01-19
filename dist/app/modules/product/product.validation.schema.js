@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.productSchema = exports.shippingDetailsSchema = exports.inventorySchema = exports.discountSchema = exports.subCategorySchema = void 0;
 // productSchemas.ts
 const zod_1 = require("zod");
-const product_interface_1 = require("./product.interface");
 exports.subCategorySchema = zod_1.z.object({
     name: zod_1.z.string(),
     description: zod_1.z.string().optional(),
@@ -33,7 +32,7 @@ exports.productSchema = zod_1.z.object({
     name: zod_1.z.string(),
     description: zod_1.z.string(),
     price: zod_1.z.number(),
-    category: zod_1.z.enum(Object.values(product_interface_1.CategoryType)),
+    category: zod_1.z.string(),
     subCategory: exports.subCategorySchema.optional(),
     images: zod_1.z.array(zod_1.z.string()).optional(),
     thumbnail: zod_1.z.string(),
