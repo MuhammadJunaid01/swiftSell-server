@@ -1,4 +1,4 @@
-import mongoose, { Query, Schema } from "mongoose";
+import mongoose, { model, Query, Schema } from "mongoose";
 import { IProduct } from "./product.interface";
 
 const ProductSchema: Schema<IProduct> = new Schema(
@@ -19,7 +19,6 @@ const ProductSchema: Schema<IProduct> = new Schema(
         validFrom: { type: Date, required: true },
         validTo: { type: Date, required: true },
       },
-      required: false,
     },
     inventory: {
       stock: { type: Number, required: true },
@@ -48,13 +47,14 @@ const ProductSchema: Schema<IProduct> = new Schema(
     },
     views: { type: Number, default: 0 },
     isActive: { type: Boolean, default: true },
-    metaTitle: { type: String, required: false, trim: true },
-    metaDescription: { type: String, required: false, trim: true },
-    deletedAt: { type: Date, default: null }, // For soft deletion
+    metaTitle: { type: String, trim: true },
+    metaDescription: { type: String, trim: true },
+    deletedAt: { type: Date, default: null },
   },
   { timestamps: true }
 );
-// Pre-save middleware to ensure the category exists
+
+// Middleware to validate category existence
 ProductSchema.pre<IProduct>("save", async function (next) {
   const categoryExists = await mongoose.models.Category.findById(this.category);
   if (!categoryExists) {
@@ -62,29 +62,30 @@ ProductSchema.pre<IProduct>("save", async function (next) {
   }
   next();
 });
+
+// Middleware to generate a unique product ID
 async function generateUniqueProductId(): Promise<string> {
   const productId = Math.floor(10000000 + Math.random() * 90000000).toString();
   const existingProduct = await mongoose.models.Product.findOne({
     id: productId,
   });
   if (existingProduct) {
-    // Retry if not unique
     return generateUniqueProductId();
   }
   return productId;
 }
 
-// Pre-save middleware to set unique productId
 ProductSchema.pre<IProduct>("save", async function (next) {
   if (!this.id) {
     this.id = await generateUniqueProductId();
   }
   next();
 });
+
+// Soft delete and filtering for active products
 ProductSchema.pre<Query<any, IProduct>>(/^find/, function (next) {
-  this.where({ isActive: true }); // Use `this` as a query object
+  this.where({ isActive: true });
   next();
 });
-const Product = mongoose.model<IProduct>("Product", ProductSchema);
 
-export default Product;
+export const Product = model<IProduct>("Product", ProductSchema);
