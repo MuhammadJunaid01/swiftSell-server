@@ -21,4 +21,4 @@ router.get("/", authGuard("user"), getOrdersForUserHandler);
 // Update order status
 router.patch("/:orderId/status", authGuard("admin"), updateOrderStatusHandler);
 
-export default router;
+export { router as orderRouter };
