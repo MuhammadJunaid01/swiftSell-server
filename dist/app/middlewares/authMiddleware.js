@@ -22,7 +22,7 @@ const authGuard = (...roles) => {
     return (0, catchAsync_1.default)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         const authorizationHeader = req.headers.authorization;
         if (!authorizationHeader || !authorizationHeader.startsWith("Bearer")) {
-            throw new globalError_1.AppError(" you are not authorized ", http_status_1.default.UNAUTHORIZED);
+            throw new globalError_1.AppError("You are not authorized", http_status_1.default.UNAUTHORIZED);
         }
         const token = authorizationHeader.split(" ")[1];
         const decoded = jsonwebtoken_1.default.verify(token, config_1.default.secret);
@@ -30,12 +30,18 @@ const authGuard = (...roles) => {
             throw new globalError_1.AppError("You have no access to this route", http_status_1.default.UNAUTHORIZED);
         }
         const { userId, role } = decoded;
+        // Allow admin to access all routes
+        if (role === "admin") {
+            req.user = userId;
+            return next();
+        }
+        // Check if the role matches the allowed roles
         if (roles && roles.length > 0 && !roles.includes(role)) {
             throw new globalError_1.AppError("You have no access to this route", http_status_1.default.UNAUTHORIZED);
         }
         const isUserExist = yield user_model_1.default.findOne({ _id: userId });
         if (!isUserExist) {
-            throw new globalError_1.AppError("user not found", http_status_1.default.NOT_FOUND);
+            throw new globalError_1.AppError("User not found", http_status_1.default.NOT_FOUND);
         }
         req.user = userId;
         next();
