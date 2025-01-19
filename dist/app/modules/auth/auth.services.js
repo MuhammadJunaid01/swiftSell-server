@@ -46,11 +46,11 @@ const registerUserIntoDB = (user) => __awaiter(void 0, void 0, void 0, function*
         // Generate OTP and set expiration
         const otp = (0, utils_1.generateOtp)();
         const otpExpiration = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
-        // Create new user
+        const hashedPassword = yield (0, utils_1.hashPassword)(password); // Create new user
         const newUser = new user_model_1.default({
             name,
             email,
-            password, // Ensure you hash the password before saving
+            password: hashedPassword, // Ensure you hash the password before saving
             gender,
             otp,
             otpExpiration,
@@ -121,6 +121,7 @@ const loginUserIntoDB = (email, password) => __awaiter(void 0, void 0, void 0, f
         yield user_model_1.default.deleteOne({ email });
         throw new globalError_1.AppError("Email not verified. User has been removed.", http_status_1.default.UNAUTHORIZED);
     }
+    console.log("user.password", user.password);
     // Compare passwords
     const isMatch = yield bcryptjs_1.default.compare(password, user.password);
     if (!isMatch) {

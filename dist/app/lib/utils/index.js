@@ -12,7 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateRefreshToken = exports.generateAccessToken = exports.generateToken = exports.sendOtpEmail = exports.generateOtp = void 0;
+exports.verifyPassword = exports.hashPassword = exports.generateRefreshToken = exports.generateAccessToken = exports.generateToken = exports.sendOtpEmail = exports.generateOtp = void 0;
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const crypto_1 = __importDefault(require("crypto"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
@@ -340,3 +341,12 @@ const generateRefreshToken = (userId) => __awaiter(void 0, void 0, void 0, funct
     return refreshToken;
 });
 exports.generateRefreshToken = generateRefreshToken;
+const hashPassword = (password) => __awaiter(void 0, void 0, void 0, function* () {
+    const saltRounds = 10; // Adjust the number of rounds for hashing complexity
+    return bcryptjs_1.default.hash(password, saltRounds);
+});
+exports.hashPassword = hashPassword;
+const verifyPassword = (password, hashedPassword) => __awaiter(void 0, void 0, void 0, function* () {
+    return bcryptjs_1.default.compare(password, hashedPassword);
+});
+exports.verifyPassword = verifyPassword;
