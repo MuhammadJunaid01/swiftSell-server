@@ -1,4 +1,4 @@
-import express from "express";
+import { Router } from "express";
 import {
   addToCartHandler,
   getCartHandler,
@@ -6,7 +6,7 @@ import {
   updateCartItemHandler,
 } from "./cart.controller";
 
-const router = express.Router();
+const router = Router();
 
 // Route for adding items to the cart
 router.post("/add", addToCartHandler);
@@ -20,4 +20,4 @@ router.post("/update", updateCartItemHandler);
 // Route for fetching the user's cart
 router.get("/:userId", getCartHandler);
 
-export default router;
+export { router as cartRouter };
