@@ -1,9 +1,10 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 import { IUser } from "../user/user.interface";
 
 export interface IReview extends Document {
-  user: IUser["_id"]; // Reference to User
+  user: Types.ObjectId; // Reference to User
   rating: number;
   reviewText?: string;
   createdAt: Date;
+  productId: Types.ObjectId;
 }

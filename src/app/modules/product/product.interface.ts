@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { IReview } from "../review/review.interface";
 
 // Category and Subcategory Types
@@ -54,7 +55,7 @@ export interface IProduct {
   name: string; // Product name
   description: string; // Detailed product description
   price: number; // Product price
-  category: CategoryType; // Main product category
+  category: Types.ObjectId; // Main product category
   subCategory?: SubCategory; // Optional subcategory
   images?: string[]; // Array of image URLs
   thumbnail: string; // Optional URL for the main thumbnail image
@@ -70,4 +71,11 @@ export interface IProduct {
   createdAt: Date; // Creation timestamp
   updatedAt: Date; // Last update timestamp
   isActive: boolean; // Whether the product is active on the platform
+  views: number;
+  averageRating: number;
+  reviewCount: number;
+  searchableTags: string[];
+  metaTitle: string;
+  metaDescription: string;
+  deletedAt: Date;
 }
