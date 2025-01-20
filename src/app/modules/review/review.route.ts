@@ -18,4 +18,4 @@ router.patch(
   ReviewController.approveReview
 ); // Admin can approve reviews
 
-export default router;
+export { router as reviewRouter };

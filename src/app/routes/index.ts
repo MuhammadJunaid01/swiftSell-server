@@ -6,6 +6,7 @@ import { cartRouter } from "../modules/cart/cart.route";
 import { categoryRouter } from "../modules/category/category.route";
 import { orderRouter } from "../modules/order/order.route";
 import { productRouter } from "../modules/product/product.route";
+import { reviewRouter } from "../modules/review/review.route";
 import { subCategoryRouter } from "../modules/sub-category/sub-category.route";
 import { userRouter } from "../modules/user/user.route";
 const router = Router();
@@ -18,6 +19,7 @@ const modules: IRoute[] = [
   { path: "/product", route: productRouter },
   { path: "/cart", route: cartRouter },
   { path: "/order", route: orderRouter },
+  { path: "/review", route: reviewRouter },
   { path: "/banners", route: bannerSliderRoutes },
 ];
 modules.forEach(({ path, route }) => router.use(path, route));

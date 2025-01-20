@@ -36,13 +36,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.reviewRouter = void 0;
 const express_1 = require("express");
 const authMiddleware_1 = __importDefault(require("../../middlewares/authMiddleware"));
 const user_interface_1 = require("../user/user.interface");
 const ReviewController = __importStar(require("./review.controller"));
 const router = (0, express_1.Router)();
+exports.reviewRouter = router;
 router.post("/", (0, authMiddleware_1.default)(user_interface_1.Role.User), ReviewController.createReview); // Only logged-in users can create reviews
 router.get("/:productId", ReviewController.getProductReviews);
 router.delete("/:reviewId", (0, authMiddleware_1.default)(user_interface_1.Role.Admin), ReviewController.deleteReview); // Only the owner can delete a review
 router.patch("/approve/:reviewId", (0, authMiddleware_1.default)(user_interface_1.Role.Admin), ReviewController.approveReview); // Admin can approve reviews
-exports.default = router;
