@@ -31,9 +31,10 @@ export interface IProduct extends Document {
   name: string;
   description: string;
   price: number;
+  mainImage: string; //this is main product  image for display
   category: Types.ObjectId;
   subCategory?: Types.ObjectId;
-  images: string[];
+  images?: string[]; //this images will be  display when use details product details as slider
   averageRating: number;
   reviewCount: number;
   reviews: Types.ObjectId[];

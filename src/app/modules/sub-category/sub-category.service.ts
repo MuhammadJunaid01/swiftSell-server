@@ -1,3 +1,11 @@
+import { name } from "ejs";
+import {
+  appliancesSubcategories,
+  beautySubcategories,
+  electronicsSubcategories,
+  fashionSubcategories,
+  furnitureSubcategories,
+} from "../../lib/data";
 import SubCategory from "./sub-category.model";
 
 export const createSubCategoryIntoDB = async (
@@ -13,6 +21,13 @@ export const createSubCategoryIntoDB = async (
 };
 
 export const getAllSubCategoriesFromDB = async () => {
+  // furnitureSubcategories.forEach(async (sub) => {
+  //   await new SubCategory({
+  //     name: sub,
+  //     category: "678f8a54418d6b158f7c7c7f",
+  //   }).save();
+  // });
+  // return "lkjkl";
   return await SubCategory.find().populate("category");
 };
 export const getSubCategoriesByCategoryFromDB = async (categoryId: string) => {

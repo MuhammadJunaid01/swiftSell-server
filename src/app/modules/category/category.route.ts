@@ -14,7 +14,11 @@ router.post(
   validateRequest(categoryValidation),
   CategoryControllers.createCategory
 );
-
+router.post(
+  "/create-categories",
+  authGuard(Role.Admin),
+  CategoryControllers.createCategories
+);
 // Route to fetch all categories
 router.get("/", CategoryControllers.getAllCategories);
 

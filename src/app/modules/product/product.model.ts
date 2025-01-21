@@ -4,20 +4,21 @@ import { IProduct } from "./product.interface";
 const ProductSchema: Schema<IProduct> = new Schema(
   {
     name: { type: String, required: true, trim: true },
+    mainImage: { type: String, required: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },
     category: { type: Schema.Types.ObjectId, ref: "Category", required: true },
     subCategory: { type: Schema.Types.ObjectId, ref: "SubCategory" },
-    images: { type: [String], required: true },
+    images: { type: [String] },
     averageRating: { type: Number, default: 0, min: 0, max: 5 },
     reviewCount: { type: Number, default: 0 },
     reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
     discount: {
       type: {
-        type: { type: String, enum: ["percentage", "fixed"], required: true },
-        value: { type: Number, required: true },
-        validFrom: { type: Date, required: true },
-        validTo: { type: Date, required: true },
+        type: { type: String, enum: ["percentage", "fixed"] },
+        value: { type: Number },
+        validFrom: { type: Date },
+        validTo: { type: Date },
       },
     },
     inventory: {
