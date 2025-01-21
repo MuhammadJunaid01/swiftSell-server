@@ -8,7 +8,8 @@ const router = Router();
 router.post("/", authGuard(Role.Admin), ProductControllers.createProduct);
 router.get("/", ProductControllers.getAllProducts);
 router.get("/:id", ProductControllers.getProductById);
-router.put("/:id", ProductControllers.updateProduct);
-router.delete("/:id", ProductControllers.deleteProduct);
+router.get("/view-product/:id", ProductControllers.viewProduct);
+router.put("/:id", authGuard(Role.Admin), ProductControllers.updateProduct);
+router.delete("/:id", authGuard(Role.Admin), ProductControllers.deleteProduct);
 
 export { router as productRouter };
