@@ -1,14 +1,57 @@
-import { Types } from "mongoose";
+import httpStatus from "http-status";
+import mongoose, { Types } from "mongoose";
+import { AppError } from "../../errors/globalError";
+import { Product } from "../product/product.model";
 import { IDeal } from "./deal.interface";
 import { Deal } from "./deal.model";
 
 // Create a new deal
 export const createDeal = async (dealData: IDeal) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
+    // Validate and update all products associated with the deal
+    const products = await Product.find({
+      _id: { $in: dealData.products },
+    }).session(session);
+
+    if (products.length !== dealData.products.length) {
+      throw new AppError(
+        "Some products in the deal do not exist",
+        httpStatus.BAD_REQUEST
+      );
+    }
+
+    // Update each product's deal-related fields
+    await Promise.all(
+      products.map((product) => {
+        product.isDeal = true;
+        if (product.discount) {
+          product.discount.type = dealData.discountType; // Optionally map deal type
+        }
+        product.dealExpiry = dealData.dealEndDate;
+        return product.save({ session });
+      })
+    );
+
+    // Create the new deal
     const newDeal = new Deal(dealData);
-    return await newDeal.save();
+    await newDeal.save({ session });
+
+    // Commit the transaction
+    await session.commitTransaction();
+    session.endSession();
+
+    return newDeal;
   } catch (error: any) {
-    throw new Error("Error creating deal: " + error.message);
+    // Rollback transaction on error
+    await session.abortTransaction();
+    session.endSession();
+    throw new AppError(
+      "Error creating deal: " + error?.message,
+      error?.status || httpStatus.INTERNAL_SERVER_ERROR
+    );
   }
 };
 
