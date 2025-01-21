@@ -1,11 +1,3 @@
-import { name } from "ejs";
-import {
-  appliancesSubcategories,
-  beautySubcategories,
-  electronicsSubcategories,
-  fashionSubcategories,
-  furnitureSubcategories,
-} from "../../lib/data";
 import SubCategory from "./sub-category.model";
 
 export const createSubCategoryIntoDB = async (

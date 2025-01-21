@@ -56,6 +56,29 @@ const deleteProduct = catchAsync(async (req: Request, res: Response) => {
     statusCode: httpStatus.OK,
   });
 });
+const viewProduct = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const response = await ProductServices.updateProductViews(id);
+  sendResponse(res, {
+    message: "Product view updated successfully",
+    success: true,
+    data: response,
+    statusCode: httpStatus.OK,
+  });
+});
+const addProductProductImages = catchAsync(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { images } = req.body;
+    const response = await ProductServices.updateProductImages(id, images);
+    sendResponse(res, {
+      message: "updated Product images  successfully",
+      success: true,
+      data: response,
+      statusCode: httpStatus.OK,
+    });
+  }
+);
 
 export const ProductControllers = {
   createProduct,
@@ -63,4 +86,6 @@ export const ProductControllers = {
   getProductById,
   updateProduct,
   deleteProduct,
+  viewProduct,
+  addProductProductImages,
 };
