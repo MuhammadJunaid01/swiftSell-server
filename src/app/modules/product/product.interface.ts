@@ -26,6 +26,7 @@ export interface IShippingDetails {
   shippingClass: "standard" | "express" | "priority";
   deliveryEstimate: string;
 }
+type Sizes = "xs" | "s" | "m" | "l" | "xl" | "xxl";
 
 export interface IProduct extends Document {
   name: string;
@@ -51,4 +52,7 @@ export interface IProduct extends Document {
   metaTitle?: string;
   metaDescription?: string;
   deletedAt?: Date;
+  color: string;
+  sizes: Sizes[];
+  availableSizes: Sizes[];
 }

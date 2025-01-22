@@ -51,7 +51,11 @@ const ProductSchema: Schema<IProduct> = new Schema(
     metaTitle: { type: String, trim: true },
     metaDescription: { type: String, trim: true },
     deletedAt: { type: Date, default: null },
+    sizes: { type: [String], required: true },
+    availableSizes: { type: [String], required: true },
+    color: { type: String, required: true },
   },
+
   { timestamps: true }
 );
 
