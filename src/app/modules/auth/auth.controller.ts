@@ -32,6 +32,16 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
     data: response,
   });
 });
+const logOutUser = catchAsync(async (req: Request, res: Response) => {
+  const { email } = req.body;
+  const response = await AuthServices.logoutUserFromDB(email);
+  sendResponse(res, {
+    success: true,
+    message: "successfully logged out",
+    statusCode: httpStatus.OK,
+    data: response,
+  });
+});
 const refreshTokenAndGenerateNewAccessToken = catchAsync(
   async (req: Request, res: Response) => {
     const { refreshToken } = req.body;
@@ -49,4 +59,5 @@ export const AuthControllers = {
   verifyOtp,
   loginUser,
   refreshTokenAndGenerateNewAccessToken,
+  logOutUser,
 };

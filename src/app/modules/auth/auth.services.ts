@@ -165,9 +165,34 @@ const refreshAccessToken = async (refreshToken: string) => {
     accessToken: newAccessToken,
   };
 };
+const logoutUserFromDB = async (userId: string) => {
+  try {
+    // Find the user by ID
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new AppError("User not found", httpStatus.NOT_FOUND);
+    }
+
+    // Invalidate the refresh token by removing it
+    user.refreshToken = "";
+    await user.save({ validateBeforeSave: true });
+
+    return "User logged out successfully";
+  } catch (error) {
+    console.error("Logout error:", error);
+    if (error instanceof AppError) {
+      throw error; // Re-throw custom AppError
+    }
+    throw new AppError(
+      "An unexpected error occurred during logout",
+      httpStatus.INTERNAL_SERVER_ERROR
+    );
+  }
+};
 export const AuthServices = {
   registerUserIntoDB,
   verifyOtpIntoDB,
   loginUserIntoDB,
   refreshAccessToken,
+  logoutUserFromDB,
 };
