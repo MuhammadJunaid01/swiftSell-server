@@ -38,10 +38,15 @@ const refreshTokenAndGenerateNewAccessToken = catchAsync(
     const response = await AuthServices.refreshAccessToken(refreshToken);
     sendResponse(res, {
       success: true,
-      message: "successfully verified",
+      message: "successfully refreshed",
       statusCode: httpStatus.CREATED,
       data: response,
     });
   }
 );
-export const AuthControllers = { registerUser, verifyOtp, loginUser };
+export const AuthControllers = {
+  registerUser,
+  verifyOtp,
+  loginUser,
+  refreshTokenAndGenerateNewAccessToken,
+};
