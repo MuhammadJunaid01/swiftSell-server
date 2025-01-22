@@ -160,7 +160,10 @@ const refreshAccessToken = async (refreshToken: string) => {
 
   // Generate new access token
   const newAccessToken = generateAccessToken((user as any)?._id, user.role);
-  return newAccessToken;
+  return {
+    user: user.toObject(),
+    accessToken: newAccessToken,
+  };
 };
 export const AuthServices = {
   registerUserIntoDB,

@@ -1,6 +1,4 @@
-import httpStatus from "http-status";
 import mongoose, { Types } from "mongoose";
-import { AppError } from "../../errors/globalError";
 import { Product } from "../product/product.model";
 import { IDeal } from "./deal.interface";
 import { Deal } from "./deal.model";
@@ -11,27 +9,39 @@ export const createDeal = async (dealData: IDeal) => {
   session.startTransaction();
 
   try {
+    // Extract product IDs from the dealData
+    const productIds = dealData.products.map((item) => item.productId);
+
     // Validate and update all products associated with the deal
     const products = await Product.find({
-      _id: { $in: dealData.products },
+      _id: { $in: productIds },
     }).session(session);
 
     if (products.length !== dealData.products.length) {
-      throw new AppError(
-        "Some products in the deal do not exist",
-        httpStatus.BAD_REQUEST
-      );
+      throw new Error("Some products in the deal do not exist");
     }
 
     // Update each product's deal-related fields
     await Promise.all(
-      products.map((product) => {
+      dealData.products.map(async ({ productId, discount }) => {
+        const product = products.find((prod) => prod._id.equals(productId));
+        if (!product) {
+          throw new Error(`Product with ID ${productId} not found`);
+        }
+
         product.isDeal = true;
         if (product.discount) {
-          product.discount.type = dealData.discountType; // Optionally map deal type
+          product.discount.type = dealData.discountType;
         }
         product.dealExpiry = dealData.dealEndDate;
-        return product.save({ session });
+        product.discount = {
+          type: dealData.discountType,
+          value: discount,
+          validFrom: dealData.dealStartDate,
+          validTo: dealData.dealEndDate,
+        };
+
+        await product.save({ session });
       })
     );
 
@@ -48,10 +58,7 @@ export const createDeal = async (dealData: IDeal) => {
     // Rollback transaction on error
     await session.abortTransaction();
     session.endSession();
-    throw new AppError(
-      "Error creating deal: " + error?.message,
-      error?.status || httpStatus.INTERNAL_SERVER_ERROR
-    );
+    throw new Error("Error creating deal: " + error.message);
   }
 };
 
