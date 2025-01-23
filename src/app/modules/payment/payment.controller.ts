@@ -20,7 +20,7 @@ export const createPaymentMethod = catchAsync(
 );
 export const getPaymentMethodByUserId = catchAsync(
   async (req: CustomRequest, res: Response) => {
-    const id = req.user?._id;
+    const id = req.user?._id as string;
     const response =
       await PaymentMethodServices.getPaymentMethodsFromDbByUserId(id);
     if (response.length > 0) {
