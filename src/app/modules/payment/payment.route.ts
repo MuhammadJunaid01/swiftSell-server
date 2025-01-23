@@ -1,20 +1,16 @@
+// routes/payment.route.ts
 import { Router } from "express";
-import authGuard from "../../middlewares/authMiddleware";
-import { validateRequest } from "../../middlewares/validateRequest";
-import { Role } from "../user/user.interface";
-import * as PaymentMethodControllers from "./payment.controller";
-import { paymentMethodValidation } from "./payment.validation";
+import { getPayment, handlePayment, updatePayment } from "./payment.controller";
+
 const router = Router();
-router.post(
-  "/create-payment-method",
-  authGuard(Role.User),
-  validateRequest(paymentMethodValidation),
-  PaymentMethodControllers.createPaymentMethod
-);
-router.get(
-  "/my-payment-method",
-  authGuard(Role.User),
-  PaymentMethodControllers.getPaymentMethodByUserId
-);
-router.put("/:id", authGuard(Role.User));
-export { router as paymentRouter };
+
+// Route to handle payment processing
+router.post("/", handlePayment);
+
+// Route to get a specific payment by ID
+router.get("/:id", getPayment);
+
+// Route to update payment status
+router.patch("/:id", updatePayment);
+
+export { router as paymentRoute };

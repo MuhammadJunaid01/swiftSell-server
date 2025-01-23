@@ -1,33 +1,29 @@
-// models/paymentMethodModel.ts
+// models/payment.model.ts
+import { Schema, model } from "mongoose";
+import { IPayment } from "./payment.interface";
 
-import mongoose, { Document, Schema } from "mongoose";
-import { PaymentMethod } from "./payment.interface";
-
-export interface IPaymentMethod extends PaymentMethod, Document {}
-
-const paymentMethodSchema: Schema = new Schema(
+const PaymentSchema = new Schema<IPayment>(
   {
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    paymentType: {
+    order: { type: Schema.Types.ObjectId, ref: "Order", required: true },
+    method: {
       type: String,
-      enum: ["card", "stripe", "paypal", "cod"],
+      enum: ["Stripe", "PayPal", "CashOnDelivery"],
       required: true,
     },
-    cardNumber: { type: String },
-    cardHolderName: { type: String },
-    expirationDate: { type: String },
-    cvv: { type: String },
-    billingAddress: { type: String },
-    stripeCustomerId: { type: String },
-    paypalEmail: { type: String },
-    isDefault: { type: Boolean, default: false },
+    amount: { type: Number, required: true },
+    transactionId: { type: String }, // Optional for COD
+    status: {
+      type: String,
+      enum: ["Pending", "Completed", "Failed", "Refunded"],
+      default: "Pending",
+    },
   },
   {
-    timestamps: true,
+    timestamps: true, // Automatically manages createdAt and updatedAt
   }
 );
 
-export const PaymentMethodModel = mongoose.model<IPaymentMethod>(
-  "PaymentMethod",
-  paymentMethodSchema
-);
+const Payment = model<IPayment>("Payment", PaymentSchema);
+
+export default Payment;
