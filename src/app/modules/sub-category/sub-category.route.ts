@@ -28,7 +28,11 @@ router.get(
 );
 
 // Route to update a subcategory
-router.put("/:id", SubCategoryControllers.updateSubCategory);
+router.put(
+  "/:id",
+  authGuard(Role.Admin),
+  SubCategoryControllers.updateSubCategory
+);
 
 // Route to delete a subcategory
 router.delete("/:id", SubCategoryControllers.deleteSubCategory);

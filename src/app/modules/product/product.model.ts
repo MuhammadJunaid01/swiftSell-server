@@ -54,6 +54,7 @@ const ProductSchema: Schema<IProduct> = new Schema(
     sizes: { type: [String], required: true },
     availableSizes: { type: [String], required: true },
     color: { type: String, required: true },
+    colors: { type: [String], required: true },
   },
 
   { timestamps: true }

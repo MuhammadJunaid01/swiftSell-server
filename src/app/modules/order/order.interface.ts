@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-
+interface ShippingInfo {}
 export interface IOrderItem {
   product: Types.ObjectId; // The product being ordered
   quantity: number; // Quantity of the product

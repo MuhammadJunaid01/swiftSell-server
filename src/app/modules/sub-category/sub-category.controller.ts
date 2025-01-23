@@ -45,8 +45,9 @@ const getSubCategoriesByCategory = catchAsync(
 );
 
 const updateSubCategory = catchAsync(async (req: Request, res: Response) => {
-  const { id, name } = req.body;
-  const response = await SubCategoryServices.updateSubCategoryIntoDB(id, name);
+  const { id } = req.params;
+  const { data } = req.body;
+  const response = await SubCategoryServices.updateSubCategoryIntoDB(id, data);
   sendResponse(res, {
     message: "Subcategory updated successfully.",
     success: true,

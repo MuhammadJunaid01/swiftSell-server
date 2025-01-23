@@ -55,4 +55,5 @@ export interface IProduct extends Document {
   color: string;
   sizes: Sizes[];
   availableSizes: Sizes[];
+  colors: string[];
 }
