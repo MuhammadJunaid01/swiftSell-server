@@ -17,3 +17,41 @@ export const createPaymentMethod = catchAsync(
     });
   }
 );
+export const getPaymentMethodByUserId = catchAsync(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const response =
+      await PaymentMethodServices.getPaymentMethodsFromDbByUserId(id);
+    if (response.length > 0) {
+      sendResponse(res, {
+        message: " successfully all retrieve payment methods",
+        statusCode: httpStatus.OK,
+        data: response,
+        success: true,
+      });
+    } else {
+      sendResponse(res, {
+        message: "No Data Found!",
+        statusCode: httpStatus.OK,
+        data: [],
+        success: true,
+      });
+    }
+  }
+);
+export const updatePaymentMethodById = catchAsync(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { data } = req.body;
+    const response = await PaymentMethodServices.updatePaymentMethodById(
+      id,
+      data
+    );
+    sendResponse(res, {
+      success: true,
+      message: "successfully updated payment method.",
+      statusCode: httpStatus.OK,
+      data: response,
+    });
+  }
+);
