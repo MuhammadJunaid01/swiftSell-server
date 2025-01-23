@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status";
+import { CustomRequest } from "../../interfaces";
 import catchAsync from "../../lib/utils/catchAsync";
 import sendResponse from "../../lib/utils/sendResponse";
 import * as PaymentMethodServices from "./payment.service";
@@ -18,8 +19,8 @@ export const createPaymentMethod = catchAsync(
   }
 );
 export const getPaymentMethodByUserId = catchAsync(
-  async (req: Request, res: Response) => {
-    const { id } = req.params;
+  async (req: CustomRequest, res: Response) => {
+    const id = req.user?._id;
     const response =
       await PaymentMethodServices.getPaymentMethodsFromDbByUserId(id);
     if (response.length > 0) {

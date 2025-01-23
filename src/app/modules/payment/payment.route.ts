@@ -11,4 +11,10 @@ router.post(
   validateRequest(paymentMethodValidation),
   PaymentMethodControllers.createPaymentMethod
 );
+router.get(
+  "/my-payment-method",
+  authGuard(Role.User),
+  PaymentMethodControllers.getPaymentMethodByUserId
+);
+router.put("/:id", authGuard(Role.User));
 export { router as paymentRouter };
