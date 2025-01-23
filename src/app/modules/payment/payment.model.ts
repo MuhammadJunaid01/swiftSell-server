@@ -5,15 +5,27 @@ import { PaymentMethod } from "./payment.interface";
 
 export interface IPaymentMethod extends PaymentMethod, Document {}
 
-const paymentMethodSchema: Schema = new Schema({
-  user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-  cardNumber: { type: String, required: true },
-  cardHolderName: { type: String, required: true },
-  expirationDate: { type: String, required: true },
-  cvv: { type: String, required: true },
-  billingAddress: { type: String, required: true },
-  isDefault: { type: Boolean, default: false },
-});
+const paymentMethodSchema: Schema = new Schema(
+  {
+    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    paymentType: {
+      type: String,
+      enum: ["card", "stripe", "paypal", "cod"],
+      required: true,
+    },
+    cardNumber: { type: String },
+    cardHolderName: { type: String },
+    expirationDate: { type: String },
+    cvv: { type: String },
+    billingAddress: { type: String },
+    stripeCustomerId: { type: String },
+    paypalEmail: { type: String },
+    isDefault: { type: Boolean, default: false },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 export const PaymentMethodModel = mongoose.model<IPaymentMethod>(
   "PaymentMethod",
