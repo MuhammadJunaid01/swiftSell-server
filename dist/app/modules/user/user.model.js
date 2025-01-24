@@ -14,7 +14,7 @@ const userSchema = new mongoose_1.Schema({
         required: false,
         default: user_interface_1.Gender.PreferNotToSay,
     },
-    location: { type: String },
+    location: { latitude: Number, longitude: Number },
     otp: { type: String },
     otpExpiration: { type: Date },
     password: { type: String, required: true },

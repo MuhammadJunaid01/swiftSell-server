@@ -7,4 +7,6 @@ const router = (0, express_1.Router)();
 exports.authRouter = router;
 router.post("/register", auth_controller_1.AuthControllers.registerUser);
 router.post("/login", auth_controller_1.AuthControllers.loginUser);
+router.post("/logged-out", auth_controller_1.AuthControllers.logOutUser);
 router.post("/verify-otp", auth_controller_1.AuthControllers.verifyOtp);
+router.post("/refresh-token", auth_controller_1.AuthControllers.refreshTokenAndGenerateNewAccessToken);

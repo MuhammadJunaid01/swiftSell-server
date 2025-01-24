@@ -26,6 +26,15 @@ const createCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
         statusCode: http_status_1.default.CREATED,
     });
 }));
+const createCategories = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield category_service_1.CategoryServices.createCategories();
+    (0, sendResponse_1.default)(res, {
+        message: "Category created successfully",
+        success: true,
+        data: response,
+        statusCode: http_status_1.default.CREATED,
+    });
+}));
 const getAllCategories = (0, catchAsync_1.default)((_req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield category_service_1.CategoryServices.getAllCategories();
     (0, sendResponse_1.default)(res, {
@@ -71,4 +80,5 @@ exports.CategoryControllers = {
     getCategoryById,
     updateCategory,
     deleteCategory,
+    createCategories,
 };

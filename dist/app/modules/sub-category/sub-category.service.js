@@ -24,6 +24,14 @@ const createSubCategoryIntoDB = (categoryId, name) => __awaiter(void 0, void 0, 
 });
 exports.createSubCategoryIntoDB = createSubCategoryIntoDB;
 const getAllSubCategoriesFromDB = () => __awaiter(void 0, void 0, void 0, function* () {
+    // fashionSubcategories.forEach(async ({ name, image }) => {
+    //   await new SubCategory({
+    //     name: name,
+    //     image: image,
+    //     category: "67927d11b7838fed7e6e5001",
+    //   }).save();
+    // });
+    // return "lkjkl";
     return yield sub_category_model_1.default.find().populate("category");
 });
 exports.getAllSubCategoriesFromDB = getAllSubCategoriesFromDB;
@@ -31,8 +39,8 @@ const getSubCategoriesByCategoryFromDB = (categoryId) => __awaiter(void 0, void 
     return yield sub_category_model_1.default.find({ category: categoryId }).exec();
 });
 exports.getSubCategoriesByCategoryFromDB = getSubCategoriesByCategoryFromDB;
-const updateSubCategoryIntoDB = (subCategoryId, name) => __awaiter(void 0, void 0, void 0, function* () {
-    const updatedSubCategory = yield sub_category_model_1.default.findByIdAndUpdate(subCategoryId, { name }, { new: true });
+const updateSubCategoryIntoDB = (subCategoryId, data) => __awaiter(void 0, void 0, void 0, function* () {
+    const updatedSubCategory = yield sub_category_model_1.default.findByIdAndUpdate(subCategoryId, data, { new: true });
     if (!updatedSubCategory) {
         throw new Error("SubCategory not found.");
     }

@@ -1,4 +1,5 @@
 "use strict";
+// models/shippingInfoModel.ts
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -32,32 +33,19 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ShippingInfoModel = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-// Schema Definition
-const SubCategorySchema = new mongoose_1.Schema({
-    category: { type: mongoose_1.Schema.Types.ObjectId, ref: "Category", required: true },
-    name: { type: String, required: true, unique: true },
-    image: { type: String },
-}, { timestamps: true });
-// Pre-save validation to ensure parent category exists
-SubCategorySchema.pre("save", function (next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const categoryExists = yield mongoose_1.default.models.Category.findById(this.category);
-        if (!categoryExists) {
-            throw new Error("Invalid parent category ID.");
-        }
-        next();
-    });
+const shippingInfoSchema = new mongoose_1.Schema({
+    user: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
+    address: { type: String, required: true },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    postalCode: { type: String, required: true },
+    country: { type: String, required: true },
+    phoneNumber: { type: String, required: true },
+    deliveryInstructions: { type: String },
+    location: { longitude: Number, latitude: Number },
+    isDefault: { type: Boolean, default: false },
 });
-const SubCategory = (0, mongoose_1.model)("SubCategory", SubCategorySchema);
-exports.default = SubCategory;
+exports.ShippingInfoModel = mongoose_1.default.model("ShippingInfo", shippingInfoSchema);

@@ -32,32 +32,49 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Deal = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-// Schema Definition
-const SubCategorySchema = new mongoose_1.Schema({
-    category: { type: mongoose_1.Schema.Types.ObjectId, ref: "Category", required: true },
-    name: { type: String, required: true, unique: true },
-    image: { type: String },
-}, { timestamps: true });
-// Pre-save validation to ensure parent category exists
-SubCategorySchema.pre("save", function (next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const categoryExists = yield mongoose_1.default.models.Category.findById(this.category);
-        if (!categoryExists) {
-            throw new Error("Invalid parent category ID.");
-        }
-        next();
-    });
+const dealSchema = new mongoose_1.Schema({
+    dealThumbnail: {
+        type: String,
+        required: [true, "Deal thumbnail is required"],
+    },
+    dealTitle: {
+        type: String,
+        required: [true, "Deal title is required"],
+        trim: true,
+    },
+    products: [
+        {
+            type: mongoose_1.default.Schema.Types.ObjectId,
+            ref: "Product",
+            required: [true, "Products are required for the deal"],
+        },
+    ],
+    dealStartDate: {
+        type: Date,
+        required: [true, "Deal start date is required"],
+    },
+    dealEndDate: {
+        type: Date,
+        required: [true, "Deal end date is required"],
+    },
+    discountType: {
+        type: String,
+        enum: ["percentage", "fixed"],
+        required: [true, "Discount type is required"],
+    },
+    discountValue: {
+        type: Number,
+        required: [true, "Discount value is required"],
+        min: [0, "Discount value cannot be less than 0"],
+    },
+    isActive: {
+        type: Boolean,
+        default: true,
+    },
+}, {
+    timestamps: true, // Automatically adds createdAt and updatedAt fields
 });
-const SubCategory = (0, mongoose_1.model)("SubCategory", SubCategorySchema);
-exports.default = SubCategory;
+exports.Deal = (0, mongoose_1.model)("Deal", dealSchema);

@@ -10,11 +10,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoryServices = void 0;
+const data_1 = require("../../lib/data");
 const category_model_1 = require("./category.model");
 exports.CategoryServices = {
     createCategory: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const category = new category_model_1.Category(data);
         return yield category.save();
+    }),
+    createCategories: () => __awaiter(void 0, void 0, void 0, function* () {
+        data_1.categories.forEach((category) => __awaiter(void 0, void 0, void 0, function* () {
+            yield new category_model_1.Category({ name: category.name, image: category.image }).save();
+        }));
     }),
     getAllCategories: () => __awaiter(void 0, void 0, void 0, function* () {
         return yield category_model_1.Category.find();

@@ -24,7 +24,9 @@ export const createDeal = async (dealData: IDeal) => {
     // Update each product's deal-related fields
     await Promise.all(
       dealData.products.map(async ({ productId, discount }) => {
-        const product = products.find((prod) => prod._id.equals(productId));
+        const product = products.find((prod) =>
+          (prod as any)?._id?.equals(productId)
+        );
         if (!product) {
           throw new Error(`Product with ID ${productId} not found`);
         }

@@ -13,12 +13,12 @@ const sub_category_validation_1 = require("./sub-category.validation");
 const router = (0, express_1.Router)();
 exports.subCategoryRouter = router;
 // Route to create a subcategory
-router.post("/", (0, authMiddleware_1.default)(user_interface_1.Role.Admin), (0, validateRequest_1.validateRequest)(sub_category_validation_1.subCategoryValidation), sub_category_controller_1.SubCategoryControllers.createSubCategory);
+router.post("/sub-category", (0, authMiddleware_1.default)(user_interface_1.Role.Admin), (0, validateRequest_1.validateRequest)(sub_category_validation_1.subCategoryValidation), sub_category_controller_1.SubCategoryControllers.createSubCategory);
 // Route to get all subcategories
-router.get("/get-all-sub-categories", sub_category_controller_1.SubCategoryControllers.getAllSubCategories);
+router.get("/sub-categories", sub_category_controller_1.SubCategoryControllers.getAllSubCategories);
 // Route to get subcategories by category
-router.get("/by-category/:categoryId", sub_category_controller_1.SubCategoryControllers.getSubCategoriesByCategory);
+router.get("/sub-category/:categoryId", sub_category_controller_1.SubCategoryControllers.getSubCategoriesByCategory);
 // Route to update a subcategory
-router.put("/:id", sub_category_controller_1.SubCategoryControllers.updateSubCategory);
+router.put("/:id", (0, authMiddleware_1.default)(user_interface_1.Role.Admin), sub_category_controller_1.SubCategoryControllers.updateSubCategory);
 // Route to delete a subcategory
 router.delete("/:id", sub_category_controller_1.SubCategoryControllers.deleteSubCategory);

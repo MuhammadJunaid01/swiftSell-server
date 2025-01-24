@@ -65,10 +65,33 @@ const deleteProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
         statusCode: http_status_1.default.OK,
     });
 }));
+const viewProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const response = yield product_service_1.ProductServices.updateProductViews(id);
+    (0, sendResponse_1.default)(res, {
+        message: "Product view updated successfully",
+        success: true,
+        data: response,
+        statusCode: http_status_1.default.OK,
+    });
+}));
+const addProductProductImages = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const { images } = req.body;
+    const response = yield product_service_1.ProductServices.updateProductImages(id, images);
+    (0, sendResponse_1.default)(res, {
+        message: "updated Product images  successfully",
+        success: true,
+        data: response,
+        statusCode: http_status_1.default.OK,
+    });
+}));
 exports.ProductControllers = {
     createProduct,
     getAllProducts,
     getProductById,
     updateProduct,
     deleteProduct,
+    viewProduct,
+    addProductProductImages,
 };
