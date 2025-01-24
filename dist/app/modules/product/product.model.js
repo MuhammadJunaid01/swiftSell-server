@@ -46,20 +46,21 @@ exports.Product = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const ProductSchema = new mongoose_1.Schema({
     name: { type: String, required: true, trim: true },
+    mainImage: { type: String, required: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },
     category: { type: mongoose_1.Schema.Types.ObjectId, ref: "Category", required: true },
     subCategory: { type: mongoose_1.Schema.Types.ObjectId, ref: "SubCategory" },
-    images: { type: [String], required: true },
+    images: { type: [String] },
     averageRating: { type: Number, default: 0, min: 0, max: 5 },
     reviewCount: { type: Number, default: 0 },
     reviews: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: "Review" }],
     discount: {
         type: {
-            type: { type: String, enum: ["percentage", "fixed"], required: true },
-            value: { type: Number, required: true },
-            validFrom: { type: Date, required: true },
-            validTo: { type: Date, required: true },
+            type: { type: String, enum: ["percentage", "fixed"] },
+            value: { type: Number },
+            validFrom: { type: Date },
+            validTo: { type: Date },
         },
     },
     inventory: {
@@ -92,6 +93,10 @@ const ProductSchema = new mongoose_1.Schema({
     metaTitle: { type: String, trim: true },
     metaDescription: { type: String, trim: true },
     deletedAt: { type: Date, default: null },
+    sizes: { type: [String], required: true },
+    availableSizes: { type: [String], required: true },
+    color: { type: String, required: true },
+    colors: { type: [String], required: true },
 }, { timestamps: true });
 // Middleware to validate category existence
 ProductSchema.pre("save", function (next) {

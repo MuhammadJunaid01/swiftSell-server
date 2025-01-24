@@ -32,4 +32,32 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
     data: response,
   });
 });
-export const AuthControllers = { registerUser, verifyOtp, loginUser };
+const logOutUser = catchAsync(async (req: Request, res: Response) => {
+  const { email } = req.body;
+  const response = await AuthServices.logoutUserFromDB(email);
+  sendResponse(res, {
+    success: true,
+    message: "successfully logged out",
+    statusCode: httpStatus.OK,
+    data: response,
+  });
+});
+const refreshTokenAndGenerateNewAccessToken = catchAsync(
+  async (req: Request, res: Response) => {
+    const { refreshToken } = req.body;
+    const response = await AuthServices.refreshAccessToken(refreshToken);
+    sendResponse(res, {
+      success: true,
+      message: "successfully refreshed",
+      statusCode: httpStatus.CREATED,
+      data: response,
+    });
+  }
+);
+export const AuthControllers = {
+  registerUser,
+  verifyOtp,
+  loginUser,
+  refreshTokenAndGenerateNewAccessToken,
+  logOutUser,
+};

@@ -156,11 +156,35 @@ const refreshAccessToken = (refreshToken) => __awaiter(void 0, void 0, void 0, f
     }
     // Generate new access token
     const newAccessToken = (0, utils_1.generateAccessToken)(user === null || user === void 0 ? void 0 : user._id, user.role);
-    return newAccessToken;
+    return {
+        user: user.toObject(),
+        accessToken: newAccessToken,
+    };
+});
+const logoutUserFromDB = (userId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Find the user by ID
+        const user = yield user_model_1.default.findById(userId);
+        if (!user) {
+            throw new globalError_1.AppError("User not found", http_status_1.default.NOT_FOUND);
+        }
+        // Invalidate the refresh token by removing it
+        user.refreshToken = "";
+        yield user.save({ validateBeforeSave: true });
+        return "User logged out successfully";
+    }
+    catch (error) {
+        console.error("Logout error:", error);
+        if (error instanceof globalError_1.AppError) {
+            throw error; // Re-throw custom AppError
+        }
+        throw new globalError_1.AppError("An unexpected error occurred during logout", http_status_1.default.INTERNAL_SERVER_ERROR);
+    }
 });
 exports.AuthServices = {
     registerUserIntoDB,
     verifyOtpIntoDB,
     loginUserIntoDB,
     refreshAccessToken,
+    logoutUserFromDB,
 };

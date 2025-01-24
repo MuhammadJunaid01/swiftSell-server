@@ -15,4 +15,6 @@ export default {
   email_pass: process.env.EMAIL_PASS,
   accessTokenExpiration: process.env.accessTokenExpiration,
   refreshTokenExpiration: process.env.refreshTokenExpiration,
+  stripe_secret_key: process.env.STRIPE_SECRET_KEY,
+  stripe_publishable_key: process.env.STRIPE_PUBLISHABLE_KEY,
 };

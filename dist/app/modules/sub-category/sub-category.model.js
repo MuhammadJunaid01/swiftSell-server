@@ -47,6 +47,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 const SubCategorySchema = new mongoose_1.Schema({
     category: { type: mongoose_1.Schema.Types.ObjectId, ref: "Category", required: true },
     name: { type: String, required: true, unique: true },
+    image: { type: String },
 }, { timestamps: true });
 // Pre-save validation to ensure parent category exists
 SubCategorySchema.pre("save", function (next) {

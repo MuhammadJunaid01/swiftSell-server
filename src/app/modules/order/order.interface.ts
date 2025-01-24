@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-
+interface ShippingInfo {}
 export interface IOrderItem {
   product: Types.ObjectId; // The product being ordered
   quantity: number; // Quantity of the product
@@ -13,7 +13,10 @@ export enum OrderStatus {
   Canceled = "Canceled",
   Returned = "Returned",
 }
-
+type StatusRecord = {
+  date: Date;
+  status: OrderStatus;
+};
 export interface IOrder {
   orderId: string; // Unique 8-digit order ID
   user: Types.ObjectId; // User who placed the order
@@ -28,4 +31,5 @@ export interface IOrder {
   isPaid: boolean; // Whether the order is paid or not
   paymentId?: string; // Payment transaction ID if available
   deliveredAt?: Date; // When the order was delivered (if applicable)
+  statusRecord: StatusRecord[];
 }

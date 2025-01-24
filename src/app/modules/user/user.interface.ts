@@ -14,6 +14,11 @@ export enum Role {
   Support = "support",
   Analyst = "analyst",
 }
+type Location = {
+  latitude: number; // Latitude of the location
+  longitude: number; // Longitude of the location
+};
+
 // IUser interface definition
 export interface IUser extends Document {
   name: string;
@@ -21,7 +26,7 @@ export interface IUser extends Document {
   profileImage?: string;
   phoneNumber?: string;
   gender: Gender;
-  location?: string;
+  location?: Location;
   otp?: string; // OTP for verification
   otpExpiration?: Date; // OTP expiration date
   password: string;

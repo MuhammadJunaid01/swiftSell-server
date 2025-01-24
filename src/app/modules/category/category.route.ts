@@ -14,7 +14,11 @@ router.post(
   validateRequest(categoryValidation),
   CategoryControllers.createCategory
 );
-
+router.post(
+  "/create-categories",
+  authGuard(Role.Admin),
+  CategoryControllers.createCategories
+);
 // Route to fetch all categories
 router.get("/", CategoryControllers.getAllCategories);
 
@@ -22,7 +26,7 @@ router.get("/", CategoryControllers.getAllCategories);
 router.get("/:id", CategoryControllers.getCategoryById);
 
 // Route to update a category
-router.put("/:id", CategoryControllers.updateCategory);
+router.put("/:id", authGuard(Role.Admin), CategoryControllers.updateCategory);
 
 // Route to delete a category
 router.delete("/:id", CategoryControllers.deleteCategory);

@@ -46,4 +46,30 @@ const loginUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void
         data: response,
     });
 }));
-exports.AuthControllers = { registerUser, verifyOtp, loginUser };
+const logOutUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email } = req.body;
+    const response = yield auth_services_1.AuthServices.logoutUserFromDB(email);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        message: "successfully logged out",
+        statusCode: http_status_1.default.OK,
+        data: response,
+    });
+}));
+const refreshTokenAndGenerateNewAccessToken = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { refreshToken } = req.body;
+    const response = yield auth_services_1.AuthServices.refreshAccessToken(refreshToken);
+    (0, sendResponse_1.default)(res, {
+        success: true,
+        message: "successfully refreshed",
+        statusCode: http_status_1.default.CREATED,
+        data: response,
+    });
+}));
+exports.AuthControllers = {
+    registerUser,
+    verifyOtp,
+    loginUser,
+    refreshTokenAndGenerateNewAccessToken,
+    logOutUser,
+};

@@ -48,8 +48,9 @@ const getSubCategoriesByCategory = (0, catchAsync_1.default)((req, res) => __awa
     });
 }));
 const updateSubCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { id, name } = req.body;
-    const response = yield sub_category_service_1.SubCategoryServices.updateSubCategoryIntoDB(id, name);
+    const { id } = req.params;
+    const { data } = req.body;
+    const response = yield sub_category_service_1.SubCategoryServices.updateSubCategoryIntoDB(id, data);
     (0, sendResponse_1.default)(res, {
         message: "Subcategory updated successfully.",
         success: true,
