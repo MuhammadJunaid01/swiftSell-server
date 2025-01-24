@@ -1,4 +1,8 @@
 import { Types } from "mongoose";
+type Location = {
+  latitude: number; // Latitude of the location
+  longitude: number; // Longitude of the location
+};
 
 export interface ShippingInfo {
   address: string;
@@ -10,4 +14,5 @@ export interface ShippingInfo {
   deliveryInstructions?: string; // Optional
   isDefault?: boolean; // Optional
   user: Types.ObjectId;
+  location?: Location;
 }

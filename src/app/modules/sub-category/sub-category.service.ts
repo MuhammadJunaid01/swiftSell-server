@@ -1,4 +1,4 @@
-import { furnitureSubcategories } from "../../lib/data";
+import { fashionSubcategories, furnitureSubcategories } from "../../lib/data";
 import { ISubCategory } from "./sub-category.interface";
 import SubCategory from "./sub-category.model";
 
@@ -15,14 +15,15 @@ export const createSubCategoryIntoDB = async (
 };
 
 export const getAllSubCategoriesFromDB = async () => {
-  furnitureSubcategories.forEach(async (sub) => {
-    await new SubCategory({
-      name: sub,
-      category: "678f8a54418d6b158f7c7c7f",
-    }).save();
-  });
-  return "lkjkl";
-  // return await SubCategory.find().populate("category");
+  // fashionSubcategories.forEach(async ({ name, image }) => {
+  //   await new SubCategory({
+  //     name: name,
+  //     image: image,
+  //     category: "67927d11b7838fed7e6e5001",
+  //   }).save();
+  // });
+  // return "lkjkl";
+  return await SubCategory.find().populate("category");
 };
 export const getSubCategoriesByCategoryFromDB = async (categoryId: string) => {
   return await SubCategory.find({ category: categoryId }).exec();

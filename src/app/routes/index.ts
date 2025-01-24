@@ -18,7 +18,7 @@ const modules: IRoute[] = [
   { path: "/auth", route: authRouter },
   { path: "/user", route: userRouter },
   { path: "/category", route: categoryRouter },
-  { path: "/category/sub-category", route: subCategoryRouter },
+  { path: "/category", route: subCategoryRouter },
   { path: "/product", route: productRouter },
   { path: "/cart", route: cartRouter },
   { path: "/order", route: orderRouter },

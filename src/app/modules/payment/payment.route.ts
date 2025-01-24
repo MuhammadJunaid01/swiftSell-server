@@ -1,6 +1,12 @@
 // routes/payment.route.ts
 import { Router } from "express";
-import { getPayment, handlePayment, updatePayment } from "./payment.controller";
+import authGuard from "../../middlewares/authMiddleware";
+import { Role } from "../user/user.interface";
+import {
+  getPaymentsByUserId,
+  handlePayment,
+  updatePayment,
+} from "./payment.controller";
 
 const router = Router();
 
@@ -8,9 +14,9 @@ const router = Router();
 router.post("/", handlePayment);
 
 // Route to get a specific payment by ID
-router.get("/:id", getPayment);
+router.get("/:id", authGuard(Role.Admin), getPaymentsByUserId);
 
 // Route to update payment status
 router.patch("/:id", updatePayment);
 
-export { router as paymentRoute };
+export { router as paymentRouter };

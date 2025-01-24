@@ -5,7 +5,7 @@ import { ShippingInfo } from "./shipping.info.interface";
 
 export interface IShippingInfo extends ShippingInfo, Document {}
 
-const shippingInfoSchema: Schema = new Schema({
+const shippingInfoSchema: Schema = new Schema<IShippingInfo>({
   user: { type: Schema.Types.ObjectId, ref: "User", required: true },
   address: { type: String, required: true },
   city: { type: String, required: true },
@@ -14,6 +14,7 @@ const shippingInfoSchema: Schema = new Schema({
   country: { type: String, required: true },
   phoneNumber: { type: String, required: true },
   deliveryInstructions: { type: String },
+  location: { longitude: Number, latitude: Number },
   isDefault: { type: Boolean, default: false },
 });
 

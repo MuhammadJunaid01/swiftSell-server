@@ -9,7 +9,7 @@ export const CategoryServices = {
   },
   createCategories: async () => {
     categories.forEach(async (category) => {
-      await new Category({ name: category }).save();
+      await new Category({ name: category.name, image: category.image }).save();
     });
   },
   getAllCategories: async () => {

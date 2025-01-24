@@ -14,7 +14,7 @@ const userSchema = new Schema<IUser>(
       required: false,
       default: Gender.PreferNotToSay,
     },
-    location: { type: String },
+    location: { latitude: Number, longitude: Number },
     otp: { type: String },
     otpExpiration: { type: Date },
     password: { type: String, required: true },
