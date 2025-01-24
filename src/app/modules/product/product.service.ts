@@ -2,7 +2,12 @@ import httpStatus from "http-status";
 import { AppError } from "../../errors/globalError";
 import { IProduct } from "./product.interface";
 import { Product } from "./product.model";
-
+type IQuery = {
+  pagination: {
+    page: number;
+    limit: number;
+  };
+};
 export const ProductServices = {
   createProduct: async (data: IProduct) => {
     const product = new Product(data);
@@ -58,7 +63,7 @@ export const ProductServices = {
     }
   },
   getAllProducts: async () => {
-    return await Product.find().populate("category subCategory");
+    return await Product.find();
   },
   getProductById: async (id: string) => {
     return await Product.findById(id).populate("category subCategory reviews");

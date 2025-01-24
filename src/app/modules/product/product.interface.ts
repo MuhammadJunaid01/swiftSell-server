@@ -42,7 +42,7 @@ export interface IProduct extends Document {
   discount?: IDiscount;
   inventory: IInventory;
   isDeal?: boolean;
-  dealType?: "day" | "week" | "month";
+  dealType?: "day" | "week" | "month" | "flashSale";
   dealExpiry?: Date;
   tags?: string[];
   searchableTags?: string[];
