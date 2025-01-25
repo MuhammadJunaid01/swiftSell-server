@@ -5,3 +5,6 @@ export interface ICategory extends Document {
   description?: string;
   image?: string;
 }
+export interface ICategoryFilterableField {
+  searchTerm?: string;
+}

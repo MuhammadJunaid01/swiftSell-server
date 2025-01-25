@@ -1,5 +1,11 @@
+import { searchHelper } from "../../../helpers/searchHelper";
+import { IGenericResponse, IPaginationOption } from "../../interfaces";
 import { categories } from "../../lib/data";
-import { ICategory } from "./category.interface";
+import {
+  CategoryFilterableFields,
+  CategorySearchableFields,
+} from "./category.constant";
+import { ICategory, ICategoryFilterableField } from "./category.interface";
 import { Category } from "./category.model";
 
 export const CategoryServices = {
@@ -12,8 +18,24 @@ export const CategoryServices = {
       await new Category({ name: category.name, image: category.image }).save();
     });
   },
-  getAllCategories: async () => {
-    return await Category.find();
+  getAllCategories: async (
+    filters: ICategoryFilterableField,
+    pagination: IPaginationOption
+  ): Promise<IGenericResponse<ICategory[]>> => {
+    const option = searchHelper(filters, pagination, CategorySearchableFields);
+    const result = await Category.find(option.whereCondition)
+      .sort(option.sortCondition)
+      .skip(option.skip)
+      .limit(option.limit as number);
+    const total = await Category.countDocuments(option.whereCondition);
+    return {
+      meta: {
+        limit: option.limit,
+        page: option.page,
+        total,
+      },
+      data: result,
+    };
   },
   getCategoryById: async (id: string) => {
     return await Category.findById(id);
