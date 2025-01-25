@@ -21,3 +21,25 @@ export interface IRoute {
   path: string;
   route: Router;
 }
+export interface IPaginationOption {
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+}
+export interface IDateRangeFilters {
+  startDate: Date;
+  endDate: Date;
+  by?: string;
+}
+export interface IGenericResponse<T> {
+  statusCode?: number;
+  success?: boolean;
+  meta?: {
+    page?: number;
+    limit?: number;
+    total?: number;
+  };
+  data?: T;
+  message?: string;
+}
