@@ -1,13 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import useragent from "useragent"; // Import useragent
 
-declare global {
-  namespace Express {
-    interface Request {
-      deviceType?: string;
-    }
-  }
-}
 export const detectDevice = (
   req: Request,
   res: Response,
