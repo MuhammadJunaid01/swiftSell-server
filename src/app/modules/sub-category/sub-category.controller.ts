@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import httpStatus from "http-status";
+import { StatusCodes } from "../../lib/statusCode";
 import catchAsync from "../../lib/utils/catchAsync";
 import sendResponse from "../../lib/utils/sendResponse";
 import { SubCategoryServices } from "./sub-category.service";
@@ -14,7 +14,7 @@ const createSubCategory = catchAsync(async (req: Request, res: Response) => {
     message: "Subcategory created successfully.",
     success: true,
     data: response,
-    statusCode: httpStatus.CREATED,
+    statusCode: StatusCodes.CREATED,
   });
 });
 
@@ -25,7 +25,7 @@ const getAllSubCategories = catchAsync(async (req: Request, res: Response) => {
     message: "Fetched all subcategories successfully.",
     success: true,
     data: response,
-    statusCode: httpStatus.OK,
+    statusCode: StatusCodes.OK,
   });
 });
 
@@ -39,7 +39,7 @@ const getSubCategoriesByCategory = catchAsync(
       message: "Fetched subcategories for the specified category successfully.",
       success: true,
       data: response,
-      statusCode: httpStatus.OK,
+      statusCode: StatusCodes.OK,
     });
   }
 );
@@ -52,7 +52,7 @@ const updateSubCategory = catchAsync(async (req: Request, res: Response) => {
     message: "Subcategory updated successfully.",
     success: true,
     data: response,
-    statusCode: httpStatus.OK,
+    statusCode: StatusCodes.OK,
   });
 });
 
@@ -63,7 +63,7 @@ const deleteSubCategory = catchAsync(async (req: Request, res: Response) => {
     message: "Subcategory deleted successfully.",
     success: true,
     data: response,
-    statusCode: httpStatus.OK,
+    statusCode: StatusCodes.OK,
   });
 });
 

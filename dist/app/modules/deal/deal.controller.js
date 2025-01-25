@@ -13,8 +13,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteDealController = exports.updateDealController = exports.getDealByIdController = exports.getAllDealsController = exports.createDealController = void 0;
-const http_status_1 = __importDefault(require("http-status"));
 const mongoose_1 = require("mongoose");
+const statusCode_1 = require("../../lib/statusCode");
 const catchAsync_1 = __importDefault(require("../../lib/utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../lib/utils/sendResponse"));
 const deal_service_1 = require("./deal.service");
@@ -23,7 +23,7 @@ exports.createDealController = (0, catchAsync_1.default)((req, res) => __awaiter
     const dealData = req.body;
     const newDeal = yield (0, deal_service_1.createDeal)(dealData);
     (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.CREATED,
+        statusCode: statusCode_1.StatusCodes.CREATED,
         success: true,
         message: "Deal created successfully",
         data: newDeal,
@@ -33,7 +33,7 @@ exports.createDealController = (0, catchAsync_1.default)((req, res) => __awaiter
 exports.getAllDealsController = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const deals = yield (0, deal_service_1.getAllDeals)();
     (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.OK,
+        statusCode: statusCode_1.StatusCodes.OK,
         success: true,
         message: "Deals fetched successfully",
         data: deals,
@@ -45,7 +45,7 @@ exports.getDealByIdController = (0, catchAsync_1.default)((req, res) => __awaite
     const deal = yield (0, deal_service_1.getDealById)(new mongoose_1.Types.ObjectId(dealId));
     if (!deal) {
         (0, sendResponse_1.default)(res, {
-            statusCode: http_status_1.default.NOT_FOUND,
+            statusCode: statusCode_1.StatusCodes.NOT_FOUND,
             success: false,
             message: "Deal not found",
             data: null,
@@ -53,7 +53,7 @@ exports.getDealByIdController = (0, catchAsync_1.default)((req, res) => __awaite
         return;
     }
     (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.OK,
+        statusCode: statusCode_1.StatusCodes.OK,
         success: true,
         message: "Deal fetched successfully",
         data: deal,
@@ -66,7 +66,7 @@ exports.updateDealController = (0, catchAsync_1.default)((req, res) => __awaiter
     const updatedDeal = yield (0, deal_service_1.updateDeal)(new mongoose_1.Types.ObjectId(dealId), dealData);
     if (!updatedDeal) {
         (0, sendResponse_1.default)(res, {
-            statusCode: http_status_1.default.NOT_FOUND,
+            statusCode: statusCode_1.StatusCodes.NOT_FOUND,
             success: false,
             message: "Deal not found",
             data: null,
@@ -74,7 +74,7 @@ exports.updateDealController = (0, catchAsync_1.default)((req, res) => __awaiter
         return;
     }
     (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.OK,
+        statusCode: statusCode_1.StatusCodes.OK,
         success: true,
         message: "Deal updated successfully",
         data: updatedDeal,
@@ -86,7 +86,7 @@ exports.deleteDealController = (0, catchAsync_1.default)((req, res) => __awaiter
     const deletedDeal = yield (0, deal_service_1.deleteDeal)(new mongoose_1.Types.ObjectId(dealId));
     if (!deletedDeal) {
         (0, sendResponse_1.default)(res, {
-            statusCode: http_status_1.default.NOT_FOUND,
+            statusCode: statusCode_1.StatusCodes.NOT_FOUND,
             success: false,
             message: "Deal not found",
             data: null,
@@ -94,7 +94,7 @@ exports.deleteDealController = (0, catchAsync_1.default)((req, res) => __awaiter
         return;
     }
     (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.NO_CONTENT,
+        statusCode: statusCode_1.StatusCodes.NO_CONTENT,
         success: true,
         message: "Deal deleted successfully",
         data: deletedDeal,

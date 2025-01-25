@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubCategoryControllers = void 0;
-const http_status_1 = __importDefault(require("http-status"));
+const statusCode_1 = require("../../lib/statusCode");
 const catchAsync_1 = __importDefault(require("../../lib/utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../lib/utils/sendResponse"));
 const sub_category_service_1 = require("./sub-category.service");
@@ -24,7 +24,7 @@ const createSubCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void
         message: "Subcategory created successfully.",
         success: true,
         data: response,
-        statusCode: http_status_1.default.CREATED,
+        statusCode: statusCode_1.StatusCodes.CREATED,
     });
 }));
 const getAllSubCategories = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -34,7 +34,7 @@ const getAllSubCategories = (0, catchAsync_1.default)((req, res) => __awaiter(vo
         message: "Fetched all subcategories successfully.",
         success: true,
         data: response,
-        statusCode: http_status_1.default.OK,
+        statusCode: statusCode_1.StatusCodes.OK,
     });
 }));
 const getSubCategoriesByCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -44,7 +44,7 @@ const getSubCategoriesByCategory = (0, catchAsync_1.default)((req, res) => __awa
         message: "Fetched subcategories for the specified category successfully.",
         success: true,
         data: response,
-        statusCode: http_status_1.default.OK,
+        statusCode: statusCode_1.StatusCodes.OK,
     });
 }));
 const updateSubCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -55,7 +55,7 @@ const updateSubCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void
         message: "Subcategory updated successfully.",
         success: true,
         data: response,
-        statusCode: http_status_1.default.OK,
+        statusCode: statusCode_1.StatusCodes.OK,
     });
 }));
 const deleteSubCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -65,7 +65,7 @@ const deleteSubCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void
         message: "Subcategory deleted successfully.",
         success: true,
         data: response,
-        statusCode: http_status_1.default.OK,
+        statusCode: statusCode_1.StatusCodes.OK,
     });
 }));
 exports.SubCategoryControllers = {

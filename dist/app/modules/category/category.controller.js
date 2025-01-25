@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CategoryControllers = void 0;
-const http_status_1 = __importDefault(require("http-status"));
+const statusCode_1 = require("../../lib/statusCode");
 const catchAsync_1 = __importDefault(require("../../lib/utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../lib/utils/sendResponse"));
 const category_service_1 = require("./category.service");
@@ -23,7 +23,7 @@ const createCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
         message: "Category created successfully",
         success: true,
         data: response,
-        statusCode: http_status_1.default.CREATED,
+        statusCode: statusCode_1.StatusCodes.CREATED,
     });
 }));
 const createCategories = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -32,7 +32,7 @@ const createCategories = (0, catchAsync_1.default)((req, res) => __awaiter(void 
         message: "Category created successfully",
         success: true,
         data: response,
-        statusCode: http_status_1.default.CREATED,
+        statusCode: statusCode_1.StatusCodes.CREATED,
     });
 }));
 const getAllCategories = (0, catchAsync_1.default)((_req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -41,7 +41,7 @@ const getAllCategories = (0, catchAsync_1.default)((_req, res) => __awaiter(void
         message: "Categories fetched successfully",
         success: true,
         data: response,
-        statusCode: http_status_1.default.OK,
+        statusCode: statusCode_1.StatusCodes.OK,
     });
 }));
 const getCategoryById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -51,7 +51,7 @@ const getCategoryById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0
         message: "Category fetched successfully",
         success: true,
         data: response,
-        statusCode: http_status_1.default.OK,
+        statusCode: statusCode_1.StatusCodes.OK,
     });
 }));
 const updateCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -61,7 +61,7 @@ const updateCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
         message: "Category updated successfully",
         success: true,
         data: response,
-        statusCode: http_status_1.default.OK,
+        statusCode: statusCode_1.StatusCodes.OK,
     });
 }));
 const deleteCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -71,7 +71,7 @@ const deleteCategory = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
         message: "Category deleted successfully",
         success: true,
         data: response,
-        statusCode: http_status_1.default.OK,
+        statusCode: statusCode_1.StatusCodes.OK,
     });
 }));
 exports.CategoryControllers = {

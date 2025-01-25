@@ -1,7 +1,7 @@
 // controllers/payment.controller.ts
 import { Request, Response } from "express";
-import httpStatus from "http-status";
 import { CustomRequest } from "../../interfaces";
+import { StatusCodes } from "../../lib/statusCode";
 import catchAsync from "../../lib/utils/catchAsync";
 import sendResponse from "../../lib/utils/sendResponse";
 import {
@@ -17,7 +17,7 @@ export const handlePayment = catchAsync(async (req: Request, res: Response) => {
     success: true,
     message: "Payment processed successfully",
     data: payment,
-    statusCode: httpStatus.CREATED,
+    statusCode: StatusCodes.CREATED,
   });
 });
 
@@ -31,14 +31,14 @@ export const getPaymentsByUserId = catchAsync(
         success: false,
         message: "Payment not found",
         data: null,
-        statusCode: httpStatus.NOT_FOUND,
+        statusCode: StatusCodes.NOT_FOUND,
       });
     } else {
       sendResponse(res, {
         success: true,
         message: "Payment retrieved successfully",
         data: payment,
-        statusCode: httpStatus.OK,
+        statusCode: StatusCodes.OK,
       });
     }
   }
@@ -55,14 +55,14 @@ export const updatePayment = catchAsync(async (req: Request, res: Response) => {
       success: false,
       message: "Payment not found",
       data: null,
-      statusCode: httpStatus.NOT_FOUND,
+      statusCode: StatusCodes.NOT_FOUND,
     });
   } else {
     sendResponse(res, {
       success: true,
       message: "Payment status updated successfully",
       data: updatedPayment,
-      statusCode: httpStatus.OK,
+      statusCode: StatusCodes.OK,
     });
   }
 });

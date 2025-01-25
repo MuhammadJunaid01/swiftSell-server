@@ -1,6 +1,6 @@
-import httpStatus from "http-status";
 import { Types } from "mongoose";
 import { AppError } from "../../errors/globalError";
+import { StatusCodes } from "../../lib/statusCode";
 import { IUser } from "./user.interface";
 import User from "./user.model";
 
@@ -24,7 +24,7 @@ const updateUserIntoDB = async (
   } catch (error: any) {
     throw new AppError(
       `Error updating user: ${error.message}`,
-      httpStatus.INTERNAL_SERVER_ERROR
+      StatusCodes.INTERNAL_SERVER_ERROR
     );
   }
 };

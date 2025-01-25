@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import httpStatus from "http-status";
 import { Types } from "mongoose";
+import { StatusCodes } from "../../lib/statusCode";
 import catchAsync from "../../lib/utils/catchAsync";
 import sendResponse from "../../lib/utils/sendResponse";
 import {
@@ -18,7 +18,7 @@ export const createDealController = catchAsync(
     const newDeal = await createDeal(dealData);
 
     sendResponse(res, {
-      statusCode: httpStatus.CREATED,
+      statusCode: StatusCodes.CREATED,
       success: true,
       message: "Deal created successfully",
       data: newDeal,
@@ -32,7 +32,7 @@ export const getAllDealsController = catchAsync(
     const deals = await getAllDeals();
 
     sendResponse(res, {
-      statusCode: httpStatus.OK,
+      statusCode: StatusCodes.OK,
       success: true,
       message: "Deals fetched successfully",
       data: deals,
@@ -48,7 +48,7 @@ export const getDealByIdController = catchAsync(
 
     if (!deal) {
       sendResponse(res, {
-        statusCode: httpStatus.NOT_FOUND,
+        statusCode: StatusCodes.NOT_FOUND,
         success: false,
         message: "Deal not found",
         data: null,
@@ -57,7 +57,7 @@ export const getDealByIdController = catchAsync(
     }
 
     sendResponse(res, {
-      statusCode: httpStatus.OK,
+      statusCode: StatusCodes.OK,
       success: true,
       message: "Deal fetched successfully",
       data: deal,
@@ -74,7 +74,7 @@ export const updateDealController = catchAsync(
 
     if (!updatedDeal) {
       sendResponse(res, {
-        statusCode: httpStatus.NOT_FOUND,
+        statusCode: StatusCodes.NOT_FOUND,
         success: false,
         message: "Deal not found",
         data: null,
@@ -83,7 +83,7 @@ export const updateDealController = catchAsync(
     }
 
     sendResponse(res, {
-      statusCode: httpStatus.OK,
+      statusCode: StatusCodes.OK,
       success: true,
       message: "Deal updated successfully",
       data: updatedDeal,
@@ -99,7 +99,7 @@ export const deleteDealController = catchAsync(
 
     if (!deletedDeal) {
       sendResponse(res, {
-        statusCode: httpStatus.NOT_FOUND,
+        statusCode: StatusCodes.NOT_FOUND,
         success: false,
         message: "Deal not found",
         data: null,
@@ -108,7 +108,7 @@ export const deleteDealController = catchAsync(
     }
 
     sendResponse(res, {
-      statusCode: httpStatus.NO_CONTENT,
+      statusCode: StatusCodes.NO_CONTENT,
       success: true,
       message: "Deal deleted successfully",
       data: deletedDeal,

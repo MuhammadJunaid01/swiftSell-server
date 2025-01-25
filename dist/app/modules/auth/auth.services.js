@@ -25,10 +25,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthServices = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const http_status_1 = __importDefault(require("http-status"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const globalError_1 = require("../../errors/globalError");
+const statusCode_1 = require("../../lib/statusCode");
 const utils_1 = require("../../lib/utils");
 const user_interface_1 = require("../user/user.interface");
 const user_model_1 = __importDefault(require("../user/user.model"));
@@ -41,7 +41,7 @@ const registerUserIntoDB = (user) => __awaiter(void 0, void 0, void 0, function*
         // Check if the user already exists
         const existingUser = yield user_model_1.default.findOne({ email }).session(session);
         if (existingUser) {
-            throw new globalError_1.AppError("User already exists", http_status_1.default.CONFLICT);
+            throw new globalError_1.AppError("User already exists", statusCode_1.StatusCodes.CONFLICT);
         }
         // Generate OTP and set expiration
         const otp = (0, utils_1.generateOtp)();
@@ -74,7 +74,7 @@ const registerUserIntoDB = (user) => __awaiter(void 0, void 0, void 0, function*
         }
         else {
             // Throw a generic AppError for unexpected errors
-            throw new globalError_1.AppError("An unexpected error occurred", http_status_1.default.INTERNAL_SERVER_ERROR);
+            throw new globalError_1.AppError("An unexpected error occurred", statusCode_1.StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
     finally {
@@ -86,15 +86,15 @@ const verifyOtpIntoDB = (email, otp) => __awaiter(void 0, void 0, void 0, functi
     // Find user by email
     const user = yield user_model_1.default.findOne({ email });
     if (!user) {
-        throw new globalError_1.AppError("User not found", http_status_1.default.NOT_FOUND);
+        throw new globalError_1.AppError("User not found", statusCode_1.StatusCodes.NOT_FOUND);
     }
     // Check if OTP is valid
     if (user.otp !== otp) {
-        throw new globalError_1.AppError("Invalid OTP", http_status_1.default.BAD_REQUEST);
+        throw new globalError_1.AppError("Invalid OTP", statusCode_1.StatusCodes.BAD_REQUEST);
     }
     // Check if OTP has expired
     if (!user.otpExpiration || user.otpExpiration < new Date()) {
-        throw new globalError_1.AppError("'OTP has expired", http_status_1.default.BAD_REQUEST);
+        throw new globalError_1.AppError("'OTP has expired", statusCode_1.StatusCodes.BAD_REQUEST);
     }
     // Update user's isVerified status
     user.isVerified = true;
@@ -113,19 +113,19 @@ const loginUserIntoDB = (email, password) => __awaiter(void 0, void 0, void 0, f
     // Find user by email
     const user = yield user_model_1.default.findOne({ email });
     if (!user) {
-        throw new globalError_1.AppError("User not found", http_status_1.default.NOT_FOUND);
+        throw new globalError_1.AppError("User not found", statusCode_1.StatusCodes.NOT_FOUND);
     }
     // Check if user is verified
     if (!user.isVerified) {
         // Delete the unverified user
         yield user_model_1.default.deleteOne({ email });
-        throw new globalError_1.AppError("Email not verified. User has been removed.", http_status_1.default.UNAUTHORIZED);
+        throw new globalError_1.AppError("Email not verified. User has been removed.", statusCode_1.StatusCodes.UNAUTHORIZED);
     }
     console.log("user.password", user.password);
     // Compare passwords
     const isMatch = yield bcryptjs_1.default.compare(password, user.password);
     if (!isMatch) {
-        throw new globalError_1.AppError("Invalid credentials", http_status_1.default.UNAUTHORIZED);
+        throw new globalError_1.AppError("Invalid credentials", statusCode_1.StatusCodes.UNAUTHORIZED);
     }
     // Generate tokens after login
     const accessToken = (0, utils_1.generateAccessToken)(user === null || user === void 0 ? void 0 : user._id, user === null || user === void 0 ? void 0 : user.role);
@@ -166,7 +166,7 @@ const logoutUserFromDB = (userId) => __awaiter(void 0, void 0, void 0, function*
         // Find the user by ID
         const user = yield user_model_1.default.findById(userId);
         if (!user) {
-            throw new globalError_1.AppError("User not found", http_status_1.default.NOT_FOUND);
+            throw new globalError_1.AppError("User not found", statusCode_1.StatusCodes.NOT_FOUND);
         }
         // Invalidate the refresh token by removing it
         user.refreshToken = "";
@@ -178,7 +178,7 @@ const logoutUserFromDB = (userId) => __awaiter(void 0, void 0, void 0, function*
         if (error instanceof globalError_1.AppError) {
             throw error; // Re-throw custom AppError
         }
-        throw new globalError_1.AppError("An unexpected error occurred during logout", http_status_1.default.INTERNAL_SERVER_ERROR);
+        throw new globalError_1.AppError("An unexpected error occurred during logout", statusCode_1.StatusCodes.INTERNAL_SERVER_ERROR);
     }
 });
 exports.AuthServices = {

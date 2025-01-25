@@ -46,7 +46,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteShippingInfo = exports.shippingInfoUpdate = exports.getShippingInfoByUserId = exports.createShippingInfo = void 0;
-const http_status_1 = __importDefault(require("http-status"));
+const statusCode_1 = require("../../lib/statusCode");
 const catchAsync_1 = __importDefault(require("../../lib/utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../lib/utils/sendResponse"));
 const ShippingInfoServices = __importStar(require("./shipping.info.service"));
@@ -56,7 +56,7 @@ exports.createShippingInfo = (0, catchAsync_1.default)((req, res) => __awaiter(v
         message: "Shipping info created successfully",
         data: response,
         success: true,
-        statusCode: http_status_1.default.CREATED,
+        statusCode: statusCode_1.StatusCodes.CREATED,
     });
 }));
 exports.getShippingInfoByUserId = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -66,14 +66,14 @@ exports.getShippingInfoByUserId = (0, catchAsync_1.default)((req, res) => __awai
             message: "No shipping info found",
             data: [],
             success: true,
-            statusCode: http_status_1.default.OK,
+            statusCode: statusCode_1.StatusCodes.OK,
         });
         if (response.length > 0) {
             (0, sendResponse_1.default)(res, {
                 message: "Shipping info found",
                 data: response,
                 success: true,
-                statusCode: http_status_1.default.OK,
+                statusCode: statusCode_1.StatusCodes.OK,
             });
         }
         else {
@@ -81,7 +81,7 @@ exports.getShippingInfoByUserId = (0, catchAsync_1.default)((req, res) => __awai
                 message: "No shipping info found",
                 data: [],
                 success: true,
-                statusCode: http_status_1.default.OK,
+                statusCode: statusCode_1.StatusCodes.OK,
             });
         }
     }
@@ -92,7 +92,7 @@ exports.shippingInfoUpdate = (0, catchAsync_1.default)((req, res) => __awaiter(v
         message: "Shipping info updated successfully",
         data: response,
         success: true,
-        statusCode: http_status_1.default.OK,
+        statusCode: statusCode_1.StatusCodes.OK,
     });
 }));
 exports.deleteShippingInfo = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -101,6 +101,6 @@ exports.deleteShippingInfo = (0, catchAsync_1.default)((req, res) => __awaiter(v
         message: "Shipping info deleted successfully",
         data: response,
         success: true,
-        statusCode: http_status_1.default.OK,
+        statusCode: statusCode_1.StatusCodes.OK,
     });
 }));

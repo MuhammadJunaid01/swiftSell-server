@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
-import httpStatus from "http-status";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { AppError } from "../../errors/globalError";
+import { StatusCodes } from "../../lib/statusCode";
 import {
   generateAccessToken,
   generateOtp,
@@ -24,7 +24,7 @@ const registerUserIntoDB = async (user: IUser) => {
     // Check if the user already exists
     const existingUser = await User.findOne({ email }).session(session);
     if (existingUser) {
-      throw new AppError("User already exists", httpStatus.CONFLICT);
+      throw new AppError("User already exists", StatusCodes.CONFLICT);
     }
 
     // Generate OTP and set expiration
@@ -61,7 +61,7 @@ const registerUserIntoDB = async (user: IUser) => {
       // Throw a generic AppError for unexpected errors
       throw new AppError(
         "An unexpected error occurred",
-        httpStatus.INTERNAL_SERVER_ERROR
+        StatusCodes.INTERNAL_SERVER_ERROR
       );
     }
   } finally {
@@ -73,17 +73,17 @@ const verifyOtpIntoDB = async (email: string, otp: string) => {
   // Find user by email
   const user: IUser | null = await User.findOne({ email });
   if (!user) {
-    throw new AppError("User not found", httpStatus.NOT_FOUND);
+    throw new AppError("User not found", StatusCodes.NOT_FOUND);
   }
 
   // Check if OTP is valid
   if (user.otp !== otp) {
-    throw new AppError("Invalid OTP", httpStatus.BAD_REQUEST);
+    throw new AppError("Invalid OTP", StatusCodes.BAD_REQUEST);
   }
 
   // Check if OTP has expired
   if (!user.otpExpiration || user.otpExpiration < new Date()) {
-    throw new AppError("'OTP has expired", httpStatus.BAD_REQUEST);
+    throw new AppError("'OTP has expired", StatusCodes.BAD_REQUEST);
   }
 
   // Update user's isVerified status
@@ -107,7 +107,7 @@ const loginUserIntoDB = async (email: string, password: string) => {
   // Find user by email
   const user: IUser | null = await User.findOne({ email });
   if (!user) {
-    throw new AppError("User not found", httpStatus.NOT_FOUND);
+    throw new AppError("User not found", StatusCodes.NOT_FOUND);
   }
 
   // Check if user is verified
@@ -116,14 +116,14 @@ const loginUserIntoDB = async (email: string, password: string) => {
     await User.deleteOne({ email });
     throw new AppError(
       "Email not verified. User has been removed.",
-      httpStatus.UNAUTHORIZED
+      StatusCodes.UNAUTHORIZED
     );
   }
   console.log("user.password", user.password);
   // Compare passwords
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
-    throw new AppError("Invalid credentials", httpStatus.UNAUTHORIZED);
+    throw new AppError("Invalid credentials", StatusCodes.UNAUTHORIZED);
   }
   // Generate tokens after login
   const accessToken = generateAccessToken((user as any)?._id, user?.role);
@@ -170,7 +170,7 @@ const logoutUserFromDB = async (userId: string) => {
     // Find the user by ID
     const user = await User.findById(userId);
     if (!user) {
-      throw new AppError("User not found", httpStatus.NOT_FOUND);
+      throw new AppError("User not found", StatusCodes.NOT_FOUND);
     }
 
     // Invalidate the refresh token by removing it
@@ -185,7 +185,7 @@ const logoutUserFromDB = async (userId: string) => {
     }
     throw new AppError(
       "An unexpected error occurred during logout",
-      httpStatus.INTERNAL_SERVER_ERROR
+      StatusCodes.INTERNAL_SERVER_ERROR
     );
   }
 };

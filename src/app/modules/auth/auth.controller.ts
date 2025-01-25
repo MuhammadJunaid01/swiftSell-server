@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import httpStatus from "http-status";
+import { StatusCodes } from "../../lib/statusCode";
 import catchAsync from "../../lib/utils/catchAsync";
 import sendResponse from "../../lib/utils/sendResponse";
 import { AuthServices } from "./auth.services";
@@ -8,7 +8,7 @@ const registerUser = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     message: "successfully auth created",
-    statusCode: httpStatus.CREATED,
+    statusCode: StatusCodes.CREATED,
     data: response,
   });
 });
@@ -18,7 +18,7 @@ const verifyOtp = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     message: "successfully verified",
-    statusCode: httpStatus.CREATED,
+    statusCode: StatusCodes.CREATED,
     data: response,
   });
 });
@@ -28,7 +28,7 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     message: "successfully verified",
-    statusCode: httpStatus.CREATED,
+    statusCode: StatusCodes.CREATED,
     data: response,
   });
 });
@@ -38,7 +38,7 @@ const logOutUser = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     message: "successfully logged out",
-    statusCode: httpStatus.OK,
+    statusCode: StatusCodes.OK,
     data: response,
   });
 });
@@ -49,7 +49,7 @@ const refreshTokenAndGenerateNewAccessToken = catchAsync(
     sendResponse(res, {
       success: true,
       message: "successfully refreshed",
-      statusCode: httpStatus.CREATED,
+      statusCode: StatusCodes.CREATED,
       data: response,
     });
   }
