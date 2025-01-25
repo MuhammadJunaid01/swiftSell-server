@@ -1,6 +1,5 @@
 import cors from "cors";
 import express, { Application, Request, Response } from "express";
-import "express-async-errors";
 import morgan from "morgan";
 import { errorHandler } from "./app/errors/globalError";
 import { detectDevice } from "./app/middlewares/detectDevice";

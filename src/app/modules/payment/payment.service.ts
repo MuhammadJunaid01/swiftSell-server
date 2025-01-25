@@ -1,5 +1,4 @@
 // services/payment.service.ts
-import paypal from "@paypal/checkout-server-sdk";
 import Stripe from "stripe";
 import config from "../../config";
 import { IPayment } from "./payment.interface";
