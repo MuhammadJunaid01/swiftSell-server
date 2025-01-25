@@ -4,20 +4,9 @@
   "description": "",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only ./src/server.ts ",
-    "prod": "node dist/server.js",
-    "start": "node dist/server.js",
-    "build": "tsc",
-    "vercel:dev": "npx vercel dev",
-    "vercel:deploy": "yarn build &&  npx vercel --prod",
-    "lint": "npx eslint . --ignore-pattern './dist/*'",
-    "fix": "eslint src --fix",
-    "clean-install": "rmdir /s /q node_modules && del yarn.lock && yarn",
-    "commit": "eslint src --fix && tsc && git add . && git-cz && git push",
-    "sync": "git pull origin develop && git push && yarn",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "postinstall": "yarn install && yarn  build",
-    "clean:install": "rmdir /s /q node_modules && del yarn.lock && npm install -g yarn && yarn install"
+    "dev": "ts-node-dev --respawn --transpile-only --watch 'src//*.ts' --ignore 'src/migrations' src/server.ts",
+    "start": "node ./dist/server.js",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
