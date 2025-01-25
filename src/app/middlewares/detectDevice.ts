@@ -17,5 +17,5 @@ export const detectDevice = (
     req.deviceType = "desktop";
   }
 
-  next(); // Proceed to the next middleware or route
+  next();
 };
