@@ -8,13 +8,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductServices = void 0;
+const mongoose_1 = require("mongoose");
 const globalError_1 = require("../../errors/globalError");
 const statusCode_1 = require("../../lib/statusCode");
+const sub_category_model_1 = __importDefault(require("../sub-category/sub-category.model"));
 const product_model_1 = require("./product.model");
 exports.ProductServices = {
     createProduct: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        const isExistSubcategory = yield sub_category_model_1.default.exists({
+            _id: new mongoose_1.Types.ObjectId(data === null || data === void 0 ? void 0 : data.subCategory),
+            category: new mongoose_1.Types.ObjectId(data.category),
+        });
+        if (!isExistSubcategory) {
+            throw new globalError_1.AppError("The specified subcategory does not exist for the given category.", statusCode_1.StatusCodes.BAD_REQUEST);
+        }
         const product = new product_model_1.Product(data);
         return yield product.save();
     }),
@@ -45,7 +57,7 @@ exports.ProductServices = {
         }
     }),
     getAllProducts: () => __awaiter(void 0, void 0, void 0, function* () {
-        return yield product_model_1.Product.find();
+        return yield product_model_1.Product.find().populate("category").populate("subCategory");
     }),
     getProductById: (id) => __awaiter(void 0, void 0, void 0, function* () {
         return yield product_model_1.Product.findById(id).populate("category subCategory reviews");

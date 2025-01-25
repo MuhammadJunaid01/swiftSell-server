@@ -57,7 +57,7 @@ export const sendOtpEmail = async (
 export const generateToken = (userId: string, role: Role): string => {
   const payload = { userId, role };
   const secretKey = process.env.JWT_SECRET_KEY || "";
-  const options = { expiresIn: "1h" };
+  const options = { expiresIn: 3600 }; // 1 hour in seconds
   return jwt.sign(payload, secretKey, options);
 };
 function getEmailHTML(name: string, otp: string, year: number) {
