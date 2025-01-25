@@ -46,7 +46,12 @@ const ProductSchema: Schema<IProduct> = new Schema(
       },
       deliveryEstimate: { type: String, required: true },
     },
-    views: { type: Number, default: 0 },
+    views: {
+      total: { type: Number, default: 0 },
+      mobile: { type: Number, default: 0 },
+      desktop: { type: Number, default: 0 },
+      tablet: { type: Number, default: 0 },
+    },
     isActive: { type: Boolean, default: true },
     metaTitle: { type: String, trim: true },
     metaDescription: { type: String, trim: true },

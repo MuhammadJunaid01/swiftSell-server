@@ -26,7 +26,8 @@ const createProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
         statusCode: statusCode_1.StatusCodes.CREATED,
     });
 }));
-const getAllProducts = (0, catchAsync_1.default)((_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getAllProducts = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("req?.deviceType", req === null || req === void 0 ? void 0 : req.deviceType);
     const response = yield product_service_1.ProductServices.getAllProducts();
     (0, sendResponse_1.default)(res, {
         message: "Products fetched successfully",
@@ -67,7 +68,7 @@ const deleteProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
 }));
 const viewProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
-    const response = yield product_service_1.ProductServices.updateProductViews(id);
+    const response = yield product_service_1.ProductServices.updateProductViews(id, req === null || req === void 0 ? void 0 : req.deviceType);
     (0, sendResponse_1.default)(res, {
         message: "Product view updated successfully",
         success: true,

@@ -1,5 +1,5 @@
 import { Document, Types } from "mongoose";
-
+export type DeviceType = "mobile" | "desktop" | "tablet";
 export interface IDiscount {
   type: "percentage" | "fixed";
   value: number;
@@ -47,7 +47,12 @@ export interface IProduct extends Document {
   tags?: string[];
   searchableTags?: string[];
   shippingDetails: IShippingDetails;
-  views: number;
+  views: {
+    total: number; // Total views across all devices
+    mobile: number; // Views from mobile devices
+    desktop: number; // Views from desktop devices
+    tablet: number; // Views from tablet devices
+  };
   isActive: boolean;
   metaTitle?: string;
   metaDescription?: string;

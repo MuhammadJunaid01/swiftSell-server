@@ -8,6 +8,7 @@ const express_1 = __importDefault(require("express"));
 require("express-async-errors");
 const morgan_1 = __importDefault(require("morgan"));
 const globalError_1 = require("./app/errors/globalError");
+const detectDevice_1 = require("./app/middlewares/detectDevice");
 const logger_1 = __importDefault(require("./app/middlewares/logger"));
 const routes_1 = __importDefault(require("./app/routes"));
 const morganFormat = ":method :url :status :response-time ms";
@@ -27,6 +28,8 @@ app.use((0, morgan_1.default)(morganFormat, {
         },
     },
 }));
+// Use the device detection middleware
+app.use(detectDevice_1.detectDevice);
 app.use("/api/v1", routes_1.default);
 app.use(globalError_1.errorHandler);
 app.get("/", (req, res) => {

@@ -12,9 +12,10 @@ export type TErrorSource = {
   path: string | number;
   message: string;
 };
-
+type DeviceType = "mobile" | "tablet" | "desktop";
 export interface CustomRequest extends Request {
   user: JwtPayload & IUser;
+  deviceType?: DeviceType;
 }
 export interface IRoute {
   path: string;
