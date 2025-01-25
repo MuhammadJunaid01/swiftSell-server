@@ -1,5 +1,7 @@
+import { Types } from "mongoose";
 import { AppError } from "../../errors/globalError";
 import { StatusCodes } from "../../lib/statusCode";
+import SubCategory from "../sub-category/sub-category.model";
 import { IProduct } from "./product.interface";
 import { Product } from "./product.model";
 type IQuery = {
@@ -10,6 +12,16 @@ type IQuery = {
 };
 export const ProductServices = {
   createProduct: async (data: IProduct) => {
+    const isExistSubcategory = await SubCategory.exists({
+      _id: new Types.ObjectId(data?.subCategory),
+      category: new Types.ObjectId(data.category),
+    });
+    if (!isExistSubcategory) {
+      throw new AppError(
+        "The specified subcategory does not exist for the given category.",
+        StatusCodes.BAD_REQUEST
+      );
+    }
     const product = new Product(data);
     return await product.save();
   },
@@ -63,7 +75,7 @@ export const ProductServices = {
     }
   },
   getAllProducts: async () => {
-    return await Product.find();
+    return await Product.find().populate("category").populate("subCategory");
   },
   getProductById: async (id: string) => {
     return await Product.findById(id).populate("category subCategory reviews");

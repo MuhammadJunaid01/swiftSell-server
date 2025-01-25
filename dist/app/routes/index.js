@@ -9,6 +9,7 @@ const deal_route_1 = require("../modules/deal/deal.route");
 const order_route_1 = require("../modules/order/order.route");
 const payment_route_1 = require("../modules/payment/payment.route");
 const product_route_1 = require("../modules/product/product.route");
+const returnRequest_routes_1 = require("../modules/return.order/returnRequest.routes");
 const review_route_1 = require("../modules/review/review.route");
 const shipping_info_route_1 = require("../modules/shipping.info/shipping.info.route");
 const sub_category_route_1 = require("../modules/sub-category/sub-category.route");
@@ -23,10 +24,11 @@ const modules = [
     { path: "/cart", route: cart_route_1.cartRouter },
     { path: "/order", route: order_route_1.orderRouter },
     { path: "/review", route: review_route_1.reviewRouter },
-    { path: "/banners", route: bannerSlider_route_1.bannerSliderRoutes },
+    { path: "/banner-sliders", route: bannerSlider_route_1.bannerSliderRoutes },
     { path: "/deals", route: deal_route_1.dealRoutes },
     { path: "/payment", route: payment_route_1.paymentRouter },
     { path: "/shipping-info", route: shipping_info_route_1.shippingInfoRouter },
+    { path: "/return-request", route: returnRequest_routes_1.returnRequestRoutes },
 ];
 modules.forEach(({ path, route }) => router.use(path, route));
 exports.default = router;

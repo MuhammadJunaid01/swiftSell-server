@@ -8,13 +8,16 @@
     "prod": "node dist/server.js",
     "start": "node dist/server.js",
     "build": "tsc",
+    "vercel:dev": "npx vercel dev",
+    "vercel:deploy": "",
     "lint": "npx eslint . --ignore-pattern './dist/*'",
     "fix": "eslint src --fix",
     "clean-install": "rmdir /s /q node_modules && del yarn.lock && yarn",
     "commit": "eslint src --fix && tsc && git add . && git-cz && git push",
     "sync": "git pull origin develop && git push && yarn",
     "format": "prettier --write \"src/**/*.ts\"",
-    "postinstall": "yarn install && yarn  build"
+    "postinstall": "yarn install && yarn  build",
+    "clean:install": "rmdir /s /q node_modules && del yarn.lock && npm install -g yarn && yarn install"
   },
   "keywords": [],
   "author": "",
@@ -39,7 +42,6 @@
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
-    "@types/ejs": "^3.1.5",
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/morgan": "^1.9.9",

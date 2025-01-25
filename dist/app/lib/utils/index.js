@@ -62,7 +62,7 @@ exports.sendOtpEmail = sendOtpEmail;
 const generateToken = (userId, role) => {
     const payload = { userId, role };
     const secretKey = process.env.JWT_SECRET_KEY || "";
-    const options = { expiresIn: "1h" };
+    const options = { expiresIn: 3600 }; // 1 hour in seconds
     return jsonwebtoken_1.default.sign(payload, secretKey, options);
 };
 exports.generateToken = generateToken;

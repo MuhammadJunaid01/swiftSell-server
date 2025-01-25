@@ -48,37 +48,43 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteBanner = exports.updateBanner = exports.getBanners = exports.createBanner = void 0;
 const statusCode_1 = require("../../lib/statusCode");
 const catchAsync_1 = __importDefault(require("../../lib/utils/catchAsync"));
+const sendResponse_1 = __importDefault(require("../../lib/utils/sendResponse"));
 const bannerSliderService = __importStar(require("./bannerSlider.service"));
 exports.createBanner = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const banner = yield bannerSliderService.createBanner(req.body);
-    res.status(statusCode_1.StatusCodes.CREATED).json({
+    (0, sendResponse_1.default)(res, {
         success: true,
         message: "Banner created successfully",
         data: banner,
+        statusCode: statusCode_1.StatusCodes.CREATED,
     });
 }));
 exports.getBanners = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const banners = yield bannerSliderService.getBanners();
-    res.status(statusCode_1.StatusCodes.OK).json({
+    (0, sendResponse_1.default)(res, {
         success: true,
         message: "Banners fetched successfully",
         data: banners,
+        statusCode: statusCode_1.StatusCodes.OK,
     });
 }));
 exports.updateBanner = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const updatedBanner = yield bannerSliderService.updateBanner(id, req.body);
-    res.status(statusCode_1.StatusCodes.OK).json({
+    (0, sendResponse_1.default)(res, {
         success: true,
         message: "Banner updated successfully",
         data: updatedBanner,
+        statusCode: statusCode_1.StatusCodes.OK,
     });
 }));
 exports.deleteBanner = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     yield bannerSliderService.deleteBanner(id);
-    res.status(statusCode_1.StatusCodes.OK).json({
+    (0, sendResponse_1.default)(res, {
         success: true,
         message: "Banner deleted successfully",
+        data: bannerSliderService,
+        statusCode: statusCode_1.StatusCodes.OK,
     });
 }));
