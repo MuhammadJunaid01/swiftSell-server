@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { StatusCodes } from "../../lib/statusCode";
 import catchAsync from "../../lib/utils/catchAsync";
 import sendResponse from "../../lib/utils/sendResponse";
+import { DeviceType } from "./product.interface";
 import { ProductServices } from "./product.service";
 
 const createProduct = catchAsync(async (req: Request, res: Response) => {
@@ -14,7 +15,9 @@ const createProduct = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const getAllProducts = catchAsync(async (_req: Request, res: Response) => {
+const getAllProducts = catchAsync(async (req: Request, res: Response) => {
+  console.log("req?.deviceType", req?.deviceType);
+
   const response = await ProductServices.getAllProducts();
   sendResponse(res, {
     message: "Products fetched successfully",
@@ -58,7 +61,10 @@ const deleteProduct = catchAsync(async (req: Request, res: Response) => {
 });
 const viewProduct = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const response = await ProductServices.updateProductViews(id);
+  const response = await ProductServices.updateProductViews(
+    id,
+    req?.deviceType as DeviceType
+  );
   sendResponse(res, {
     message: "Product view updated successfully",
     success: true,

@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { AppError } from "../../errors/globalError";
 import { StatusCodes } from "../../lib/statusCode";
 import SubCategory from "../sub-category/sub-category.model";
-import { IProduct } from "./product.interface";
+import { DeviceType, IProduct } from "./product.interface";
 import { Product } from "./product.model";
 type IQuery = {
   pagination: {
@@ -26,19 +26,18 @@ export const ProductServices = {
     return await product.save();
   },
 
-  updateProductViews: async (productId: string): Promise<void> => {
-    try {
-      await Product.findByIdAndUpdate(
-        productId,
-        { $inc: { views: 1 } },
-        { new: true }
-      );
-    } catch (error: any) {
-      throw new AppError(
-        `Failed to update views: ${error.message}`,
-        StatusCodes.INTERNAL_SERVER_ERROR
-      );
-    }
+  updateProductViews: async (
+    productId: string,
+    deviceType: DeviceType
+  ): Promise<void> => {
+    const updateField = `views.${deviceType}`;
+    await Product.findByIdAndUpdate(
+      productId,
+      {
+        $inc: { [updateField]: 1, "views.total": 1 },
+      },
+      { new: true }
+    );
   },
   updateProductImages: async (
     productId: string,

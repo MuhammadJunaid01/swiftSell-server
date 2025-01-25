@@ -1,6 +1,18 @@
 import mongoose, { model, Query, Schema } from "mongoose";
-import { IProduct } from "./product.interface";
+import { IProduct, IProductDetails } from "./product.interface";
 
+const ProductDetailsSchema = new Schema<IProductDetails>(
+  {
+    material: { type: String, required: true },
+    brand: { type: String, required: true },
+    careInstructions: { type: [String], required: true },
+    originCountry: { type: String, required: true },
+    fitType: { type: String, enum: ["regular", "slim", "relaxed"] },
+    occasion: { type: String, enum: ["casual", "formal", "party", "sports"] },
+    pattern: { type: String },
+  },
+  { _id: false }
+);
 const ProductSchema: Schema<IProduct> = new Schema(
   {
     name: { type: String, required: true, trim: true },
@@ -46,7 +58,12 @@ const ProductSchema: Schema<IProduct> = new Schema(
       },
       deliveryEstimate: { type: String, required: true },
     },
-    views: { type: Number, default: 0 },
+    views: {
+      total: { type: Number, default: 0 },
+      mobile: { type: Number, default: 0 },
+      desktop: { type: Number, default: 0 },
+      tablet: { type: Number, default: 0 },
+    },
     isActive: { type: Boolean, default: true },
     metaTitle: { type: String, trim: true },
     metaDescription: { type: String, trim: true },
@@ -55,6 +72,7 @@ const ProductSchema: Schema<IProduct> = new Schema(
     availableSizes: { type: [String], required: true },
     color: { type: String, required: true },
     colors: { type: [String], required: true },
+    productDetails: { type: ProductDetailsSchema, required: true },
   },
 
   { timestamps: true }

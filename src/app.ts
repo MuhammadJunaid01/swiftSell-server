@@ -3,6 +3,7 @@ import express, { Application, Request, Response } from "express";
 import "express-async-errors";
 import morgan from "morgan";
 import { errorHandler } from "./app/errors/globalError";
+import { detectDevice } from "./app/middlewares/detectDevice";
 import logger from "./app/middlewares/logger";
 import router from "./app/routes";
 
@@ -25,6 +26,8 @@ app.use(
     },
   })
 );
+// Use the device detection middleware
+app.use(detectDevice);
 app.use("/api/v1", router);
 app.use(errorHandler);
 app.get("/", (req: Request, res: Response) => {

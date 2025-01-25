@@ -30,13 +30,11 @@ exports.ProductServices = {
         const product = new product_model_1.Product(data);
         return yield product.save();
     }),
-    updateProductViews: (productId) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            yield product_model_1.Product.findByIdAndUpdate(productId, { $inc: { views: 1 } }, { new: true });
-        }
-        catch (error) {
-            throw new globalError_1.AppError(`Failed to update views: ${error.message}`, statusCode_1.StatusCodes.INTERNAL_SERVER_ERROR);
-        }
+    updateProductViews: (productId, deviceType) => __awaiter(void 0, void 0, void 0, function* () {
+        const updateField = `views.${deviceType}`;
+        yield product_model_1.Product.findByIdAndUpdate(productId, {
+            $inc: { [updateField]: 1, "views.total": 1 },
+        }, { new: true });
     }),
     updateProductImages: (productId, images) => __awaiter(void 0, void 0, void 0, function* () {
         try {

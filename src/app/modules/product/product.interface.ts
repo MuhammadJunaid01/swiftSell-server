@@ -1,12 +1,20 @@
 import { Document, Types } from "mongoose";
-
+export type DeviceType = "mobile" | "desktop" | "tablet";
 export interface IDiscount {
   type: "percentage" | "fixed";
   value: number;
   validFrom: Date;
   validTo: Date;
 }
-
+export interface IProductDetails {
+  material: string; // Material of the product (e.g., Cotton, Polyester)
+  brand: string; // Brand name
+  careInstructions: string[]; // Care instructions for the product
+  originCountry: string; // Country where the product was made
+  fitType?: "regular" | "slim" | "relaxed"; // Fit type
+  occasion?: "casual" | "formal" | "party" | "sports"; // Suitable occasion
+  pattern?: string; // Pattern (e.g., solid, striped, checked)
+}
 export interface IInventory {
   stock: number;
   reservedStock?: number;
@@ -47,7 +55,12 @@ export interface IProduct extends Document {
   tags?: string[];
   searchableTags?: string[];
   shippingDetails: IShippingDetails;
-  views: number;
+  views: {
+    total: number; // Total views across all devices
+    mobile: number; // Views from mobile devices
+    desktop: number; // Views from desktop devices
+    tablet: number; // Views from tablet devices
+  };
   isActive: boolean;
   metaTitle?: string;
   metaDescription?: string;
@@ -56,4 +69,5 @@ export interface IProduct extends Document {
   sizes: Sizes[];
   availableSizes: Sizes[];
   colors: string[];
+  productDetails: IProductDetails;
 }

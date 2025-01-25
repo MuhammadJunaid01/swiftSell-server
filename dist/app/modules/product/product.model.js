@@ -44,6 +44,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Product = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
+const ProductDetailsSchema = new mongoose_1.Schema({
+    material: { type: String, required: true },
+    brand: { type: String, required: true },
+    careInstructions: { type: [String], required: true },
+    originCountry: { type: String, required: true },
+    fitType: { type: String, enum: ["regular", "slim", "relaxed"] },
+    occasion: { type: String, enum: ["casual", "formal", "party", "sports"] },
+    pattern: { type: String },
+}, { _id: false });
 const ProductSchema = new mongoose_1.Schema({
     name: { type: String, required: true, trim: true },
     mainImage: { type: String, required: true },
@@ -88,7 +97,12 @@ const ProductSchema = new mongoose_1.Schema({
         },
         deliveryEstimate: { type: String, required: true },
     },
-    views: { type: Number, default: 0 },
+    views: {
+        total: { type: Number, default: 0 },
+        mobile: { type: Number, default: 0 },
+        desktop: { type: Number, default: 0 },
+        tablet: { type: Number, default: 0 },
+    },
     isActive: { type: Boolean, default: true },
     metaTitle: { type: String, trim: true },
     metaDescription: { type: String, trim: true },
@@ -97,6 +111,7 @@ const ProductSchema = new mongoose_1.Schema({
     availableSizes: { type: [String], required: true },
     color: { type: String, required: true },
     colors: { type: [String], required: true },
+    productDetails: { type: ProductDetailsSchema, required: true },
 }, { timestamps: true });
 // Middleware to validate category existence
 ProductSchema.pre("save", function (next) {
