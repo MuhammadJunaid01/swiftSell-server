@@ -6,7 +6,7 @@ import { CategoryServices } from "./category.service";
 import pick from "../../../shared/pick";
 import { CategoryFilterableFields } from "./category.constant";
 import { paginationOption } from "../../../shared/constant";
-
+//
 const createCategory = catchAsync(async (req: Request, res: Response) => {
   const response = await CategoryServices.createCategory(req.body);
   sendResponse(res, {
