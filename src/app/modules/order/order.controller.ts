@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import httpStatus from "http-status";
 import { CustomRequest } from "../../interfaces";
+import { StatusCodes } from "../../lib/statusCode";
 import catchAsync from "../../lib/utils/catchAsync";
 import sendResponse from "../../lib/utils/sendResponse";
 import {
@@ -21,7 +21,7 @@ export const createOrderHandler = catchAsync(
     const newOrder = await createOrder({ ...orderData, user: userId });
 
     sendResponse(res, {
-      statusCode: httpStatus.CREATED,
+      statusCode: StatusCodes.CREATED,
       success: true,
       message: "Order created successfully",
       data: newOrder,
@@ -40,7 +40,7 @@ export const getOrderHandler = catchAsync(
 
     if (!order) {
       sendResponse(res, {
-        statusCode: httpStatus.NOT_FOUND,
+        statusCode: StatusCodes.NOT_FOUND,
         success: false,
         message: "Order not found",
         data: null,
@@ -49,7 +49,7 @@ export const getOrderHandler = catchAsync(
     }
 
     sendResponse(res, {
-      statusCode: httpStatus.OK,
+      statusCode: StatusCodes.OK,
       success: true,
       message: "Order fetched successfully",
       data: order,
@@ -67,7 +67,7 @@ export const getOrdersForUserHandler = catchAsync(
     const orders = await getOrdersByUserId(userId);
 
     sendResponse(res, {
-      statusCode: httpStatus.OK,
+      statusCode: StatusCodes.OK,
       success: true,
       message: "Orders fetched successfully",
       data: orders,
@@ -87,7 +87,7 @@ export const updateOrderStatusHandler = catchAsync(
 
     if (!updatedOrder) {
       sendResponse(res, {
-        statusCode: httpStatus.NOT_FOUND,
+        statusCode: StatusCodes.NOT_FOUND,
         success: false,
         message: "Order not found or unable to update",
         data: null,
@@ -96,7 +96,7 @@ export const updateOrderStatusHandler = catchAsync(
     }
 
     sendResponse(res, {
-      statusCode: httpStatus.OK,
+      statusCode: StatusCodes.OK,
       success: true,
       message: "Order status updated successfully",
       data: updatedOrder,

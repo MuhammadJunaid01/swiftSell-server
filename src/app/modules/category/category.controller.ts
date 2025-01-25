@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import httpStatus from "http-status";
+import { StatusCodes } from "../../lib/statusCode";
 import catchAsync from "../../lib/utils/catchAsync";
 import sendResponse from "../../lib/utils/sendResponse";
 import { CategoryServices } from "./category.service";
@@ -10,7 +10,7 @@ const createCategory = catchAsync(async (req: Request, res: Response) => {
     message: "Category created successfully",
     success: true,
     data: response,
-    statusCode: httpStatus.CREATED,
+    statusCode: StatusCodes.CREATED,
   });
 });
 const createCategories = catchAsync(async (req: Request, res: Response) => {
@@ -19,7 +19,7 @@ const createCategories = catchAsync(async (req: Request, res: Response) => {
     message: "Category created successfully",
     success: true,
     data: response,
-    statusCode: httpStatus.CREATED,
+    statusCode: StatusCodes.CREATED,
   });
 });
 
@@ -29,7 +29,7 @@ const getAllCategories = catchAsync(async (_req: Request, res: Response) => {
     message: "Categories fetched successfully",
     success: true,
     data: response,
-    statusCode: httpStatus.OK,
+    statusCode: StatusCodes.OK,
   });
 });
 
@@ -40,7 +40,7 @@ const getCategoryById = catchAsync(async (req: Request, res: Response) => {
     message: "Category fetched successfully",
     success: true,
     data: response,
-    statusCode: httpStatus.OK,
+    statusCode: StatusCodes.OK,
   });
 });
 
@@ -51,7 +51,7 @@ const updateCategory = catchAsync(async (req: Request, res: Response) => {
     message: "Category updated successfully",
     success: true,
     data: response,
-    statusCode: httpStatus.OK,
+    statusCode: StatusCodes.OK,
   });
 });
 
@@ -62,7 +62,7 @@ const deleteCategory = catchAsync(async (req: Request, res: Response) => {
     message: "Category deleted successfully",
     success: true,
     data: response,
-    statusCode: httpStatus.OK,
+    statusCode: StatusCodes.OK,
   });
 });
 

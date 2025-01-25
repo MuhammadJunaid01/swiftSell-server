@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updatePayment = exports.getPaymentsByUserId = exports.handlePayment = void 0;
-const http_status_1 = __importDefault(require("http-status"));
+const statusCode_1 = require("../../lib/statusCode");
 const catchAsync_1 = __importDefault(require("../../lib/utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../lib/utils/sendResponse"));
 const payment_service_1 = require("./payment.service");
@@ -23,7 +23,7 @@ exports.handlePayment = (0, catchAsync_1.default)((req, res) => __awaiter(void 0
         success: true,
         message: "Payment processed successfully",
         data: payment,
-        statusCode: http_status_1.default.CREATED,
+        statusCode: statusCode_1.StatusCodes.CREATED,
     });
 }));
 exports.getPaymentsByUserId = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -34,7 +34,7 @@ exports.getPaymentsByUserId = (0, catchAsync_1.default)((req, res) => __awaiter(
             success: false,
             message: "Payment not found",
             data: null,
-            statusCode: http_status_1.default.NOT_FOUND,
+            statusCode: statusCode_1.StatusCodes.NOT_FOUND,
         });
     }
     else {
@@ -42,7 +42,7 @@ exports.getPaymentsByUserId = (0, catchAsync_1.default)((req, res) => __awaiter(
             success: true,
             message: "Payment retrieved successfully",
             data: payment,
-            statusCode: http_status_1.default.OK,
+            statusCode: statusCode_1.StatusCodes.OK,
         });
     }
 }));
@@ -53,7 +53,7 @@ exports.updatePayment = (0, catchAsync_1.default)((req, res) => __awaiter(void 0
             success: false,
             message: "Payment not found",
             data: null,
-            statusCode: http_status_1.default.NOT_FOUND,
+            statusCode: statusCode_1.StatusCodes.NOT_FOUND,
         });
     }
     else {
@@ -61,7 +61,7 @@ exports.updatePayment = (0, catchAsync_1.default)((req, res) => __awaiter(void 0
             success: true,
             message: "Payment status updated successfully",
             data: updatedPayment,
-            statusCode: http_status_1.default.OK,
+            statusCode: statusCode_1.StatusCodes.OK,
         });
     }
 }));

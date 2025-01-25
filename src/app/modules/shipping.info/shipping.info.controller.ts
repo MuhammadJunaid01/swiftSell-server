@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import httpStatus from "http-status";
+import { StatusCodes } from "../../lib/statusCode";
 import catchAsync from "../../lib/utils/catchAsync";
 import sendResponse from "../../lib/utils/sendResponse";
 import * as ShippingInfoServices from "./shipping.info.service";
@@ -12,7 +12,7 @@ export const createShippingInfo = catchAsync(
       message: "Shipping info created successfully",
       data: response,
       success: true,
-      statusCode: httpStatus.CREATED,
+      statusCode: StatusCodes.CREATED,
     });
   }
 );
@@ -26,21 +26,21 @@ export const getShippingInfoByUserId = catchAsync(
         message: "No shipping info found",
         data: [],
         success: true,
-        statusCode: httpStatus.OK,
+        statusCode: StatusCodes.OK,
       });
       if (response.length > 0) {
         sendResponse(res, {
           message: "Shipping info found",
           data: response,
           success: true,
-          statusCode: httpStatus.OK,
+          statusCode: StatusCodes.OK,
         });
       } else {
         sendResponse(res, {
           message: "No shipping info found",
           data: [],
           success: true,
-          statusCode: httpStatus.OK,
+          statusCode: StatusCodes.OK,
         });
       }
     }
@@ -56,7 +56,7 @@ export const shippingInfoUpdate = catchAsync(
       message: "Shipping info updated successfully",
       data: response,
       success: true,
-      statusCode: httpStatus.OK,
+      statusCode: StatusCodes.OK,
     });
   }
 );
@@ -69,7 +69,7 @@ export const deleteShippingInfo = catchAsync(
       message: "Shipping info deleted successfully",
       data: response,
       success: true,
-      statusCode: httpStatus.OK,
+      statusCode: StatusCodes.OK,
     });
   }
 );

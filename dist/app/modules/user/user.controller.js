@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserControllers = void 0;
-const http_status_1 = __importDefault(require("http-status"));
+const statusCode_1 = require("../../lib/statusCode");
 const catchAsync_1 = __importDefault(require("../../lib/utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../lib/utils/sendResponse"));
 const user_services_1 = require("./user.services");
@@ -23,7 +23,7 @@ const updateUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
     (0, sendResponse_1.default)(res, {
         success: true,
         message: "successfully user  updated ",
-        statusCode: http_status_1.default.OK,
+        statusCode: statusCode_1.StatusCodes.OK,
         data: response,
     });
 }));

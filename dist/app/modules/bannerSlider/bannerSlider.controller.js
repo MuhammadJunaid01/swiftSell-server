@@ -46,12 +46,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteBanner = exports.updateBanner = exports.getBanners = exports.createBanner = void 0;
-const http_status_1 = __importDefault(require("http-status"));
+const statusCode_1 = require("../../lib/statusCode");
 const catchAsync_1 = __importDefault(require("../../lib/utils/catchAsync"));
 const bannerSliderService = __importStar(require("./bannerSlider.service"));
 exports.createBanner = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const banner = yield bannerSliderService.createBanner(req.body);
-    res.status(http_status_1.default.CREATED).json({
+    res.status(statusCode_1.StatusCodes.CREATED).json({
         success: true,
         message: "Banner created successfully",
         data: banner,
@@ -59,7 +59,7 @@ exports.createBanner = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
 }));
 exports.getBanners = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const banners = yield bannerSliderService.getBanners();
-    res.status(http_status_1.default.OK).json({
+    res.status(statusCode_1.StatusCodes.OK).json({
         success: true,
         message: "Banners fetched successfully",
         data: banners,
@@ -68,7 +68,7 @@ exports.getBanners = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, v
 exports.updateBanner = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     const updatedBanner = yield bannerSliderService.updateBanner(id, req.body);
-    res.status(http_status_1.default.OK).json({
+    res.status(statusCode_1.StatusCodes.OK).json({
         success: true,
         message: "Banner updated successfully",
         data: updatedBanner,
@@ -77,7 +77,7 @@ exports.updateBanner = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
 exports.deleteBanner = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     yield bannerSliderService.deleteBanner(id);
-    res.status(http_status_1.default.OK).json({
+    res.status(statusCode_1.StatusCodes.OK).json({
         success: true,
         message: "Banner deleted successfully",
     });

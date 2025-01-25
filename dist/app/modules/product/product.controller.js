@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductControllers = void 0;
-const http_status_1 = __importDefault(require("http-status"));
+const statusCode_1 = require("../../lib/statusCode");
 const catchAsync_1 = __importDefault(require("../../lib/utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../lib/utils/sendResponse"));
 const product_service_1 = require("./product.service");
@@ -23,7 +23,7 @@ const createProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
         message: "Product created successfully",
         success: true,
         data: response,
-        statusCode: http_status_1.default.CREATED,
+        statusCode: statusCode_1.StatusCodes.CREATED,
     });
 }));
 const getAllProducts = (0, catchAsync_1.default)((_req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -32,7 +32,7 @@ const getAllProducts = (0, catchAsync_1.default)((_req, res) => __awaiter(void 0
         message: "Products fetched successfully",
         success: true,
         data: response,
-        statusCode: http_status_1.default.OK,
+        statusCode: statusCode_1.StatusCodes.OK,
     });
 }));
 const getProductById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -42,7 +42,7 @@ const getProductById = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
         message: "Product fetched successfully",
         success: true,
         data: response,
-        statusCode: http_status_1.default.OK,
+        statusCode: statusCode_1.StatusCodes.OK,
     });
 }));
 const updateProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -52,7 +52,7 @@ const updateProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
         message: "Product updated successfully",
         success: true,
         data: response,
-        statusCode: http_status_1.default.OK,
+        statusCode: statusCode_1.StatusCodes.OK,
     });
 }));
 const deleteProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -62,7 +62,7 @@ const deleteProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
         message: "Product deleted successfully",
         success: true,
         data: response,
-        statusCode: http_status_1.default.OK,
+        statusCode: statusCode_1.StatusCodes.OK,
     });
 }));
 const viewProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -72,7 +72,7 @@ const viewProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, vo
         message: "Product view updated successfully",
         success: true,
         data: response,
-        statusCode: http_status_1.default.OK,
+        statusCode: statusCode_1.StatusCodes.OK,
     });
 }));
 const addProductProductImages = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -83,7 +83,7 @@ const addProductProductImages = (0, catchAsync_1.default)((req, res) => __awaite
         message: "updated Product images  successfully",
         success: true,
         data: response,
-        statusCode: http_status_1.default.OK,
+        statusCode: statusCode_1.StatusCodes.OK,
     });
 }));
 exports.ProductControllers = {

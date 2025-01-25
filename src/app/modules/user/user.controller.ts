@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import httpStatus from "http-status";
+import { StatusCodes } from "../../lib/statusCode";
 import catchAsync from "../../lib/utils/catchAsync";
 import sendResponse from "../../lib/utils/sendResponse";
 import { UserServices } from "./user.services";
@@ -9,7 +9,7 @@ const updateUser = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     message: "successfully user  updated ",
-    statusCode: httpStatus.OK,
+    statusCode: StatusCodes.OK,
     data: response,
   });
 });

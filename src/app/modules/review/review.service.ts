@@ -1,5 +1,5 @@
-import httpStatus from "http-status";
 import { AppError } from "../../errors/globalError";
+import { StatusCodes } from "../../lib/statusCode";
 import { IReview } from "./review.interface";
 import { Review } from "./review.model";
 
@@ -24,12 +24,12 @@ export const deleteReview = async (
 ): Promise<void> => {
   const review = await Review.findById(reviewId);
   if (!review) {
-    throw new AppError("Review not found", httpStatus.NOT_FOUND);
+    throw new AppError("Review not found", StatusCodes.NOT_FOUND);
   }
   if (review.user.toString() !== userId) {
     throw new AppError(
       "Unauthorized to delete this review",
-      httpStatus.FORBIDDEN
+      StatusCodes.FORBIDDEN
     );
   }
   review.isDeleted = true;

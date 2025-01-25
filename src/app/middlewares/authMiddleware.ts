@@ -1,10 +1,10 @@
 import { NextFunction, Response } from "express";
-import httpStatus from "http-status";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../../app/config";
 
 import { CustomRequest } from "../../app/interfaces";
 import { AppError } from "../errors/globalError";
+import { StatusCodes } from "../lib/statusCode";
 import catchAsync from "../lib/utils/catchAsync";
 import { Role } from "../modules/user/user.interface";
 import User from "../modules/user/user.model";
@@ -18,7 +18,7 @@ const authGuard = (...roles: Role[]) => {
       if (!authorizationHeader || !authorizationHeader.startsWith("Bearer")) {
         throw new AppError(
           "Authorization header is missing or improperly formatted. Please provide a valid token.",
-          httpStatus.UNAUTHORIZED
+          StatusCodes.UNAUTHORIZED
         );
       }
 
@@ -31,7 +31,7 @@ const authGuard = (...roles: Role[]) => {
       } catch (error) {
         throw new AppError(
           "Invalid or expired token. Please login again to obtain a valid token.",
-          httpStatus.UNAUTHORIZED
+          StatusCodes.UNAUTHORIZED
         );
       }
 
@@ -49,7 +49,7 @@ const authGuard = (...roles: Role[]) => {
           `Access denied. This route is restricted to roles: ${roles.join(
             ", "
           )}.`,
-          httpStatus.FORBIDDEN
+          StatusCodes.FORBIDDEN
         );
       }
 
@@ -58,7 +58,7 @@ const authGuard = (...roles: Role[]) => {
       if (!isUserExist) {
         throw new AppError(
           "The user associated with this token does not exist. Please ensure your account is active.",
-          httpStatus.NOT_FOUND
+          StatusCodes.NOT_FOUND
         );
       }
 

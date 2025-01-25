@@ -13,9 +13,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserServices = void 0;
-const http_status_1 = __importDefault(require("http-status"));
 const mongoose_1 = require("mongoose");
 const globalError_1 = require("../../errors/globalError");
+const statusCode_1 = require("../../lib/statusCode");
 const user_model_1 = __importDefault(require("./user.model"));
 const updateUserIntoDB = (userId, user) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -26,7 +26,7 @@ const updateUserIntoDB = (userId, user) => __awaiter(void 0, void 0, void 0, fun
         return updatedUser;
     }
     catch (error) {
-        throw new globalError_1.AppError(`Error updating user: ${error.message}`, http_status_1.default.INTERNAL_SERVER_ERROR);
+        throw new globalError_1.AppError(`Error updating user: ${error.message}`, statusCode_1.StatusCodes.INTERNAL_SERVER_ERROR);
     }
 });
 exports.UserServices = { updateUserIntoDB };

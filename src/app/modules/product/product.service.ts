@@ -1,5 +1,5 @@
-import httpStatus from "http-status";
 import { AppError } from "../../errors/globalError";
+import { StatusCodes } from "../../lib/statusCode";
 import { IProduct } from "./product.interface";
 import { Product } from "./product.model";
 type IQuery = {
@@ -24,7 +24,7 @@ export const ProductServices = {
     } catch (error: any) {
       throw new AppError(
         `Failed to update views: ${error.message}`,
-        httpStatus.INTERNAL_SERVER_ERROR
+        StatusCodes.INTERNAL_SERVER_ERROR
       );
     }
   },
@@ -41,7 +41,7 @@ export const ProductServices = {
     } catch (error: any) {
       throw new AppError(
         `Failed to update images: ${error.message}`,
-        httpStatus.INTERNAL_SERVER_ERROR
+        StatusCodes.INTERNAL_SERVER_ERROR
       );
     }
   },
@@ -58,7 +58,7 @@ export const ProductServices = {
     } catch (error: any) {
       throw new AppError(
         `Failed to delete image: ${error.message}`,
-        httpStatus.INTERNAL_SERVER_ERROR
+        StatusCodes.INTERNAL_SERVER_ERROR
       );
     }
   },

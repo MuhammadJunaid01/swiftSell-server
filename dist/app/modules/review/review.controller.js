@@ -46,17 +46,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.approveReview = exports.deleteReview = exports.getProductReviews = exports.createReview = void 0;
-const http_status_1 = __importDefault(require("http-status"));
+const statusCode_1 = require("../../lib/statusCode");
 const catchAsync_1 = __importDefault(require("../../lib/utils/catchAsync"));
 const ReviewService = __importStar(require("./review.service"));
 exports.createReview = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const review = yield ReviewService.createReview(req.body);
-    res.status(http_status_1.default.CREATED).json({ success: true, data: review });
+    res.status(statusCode_1.StatusCodes.CREATED).json({ success: true, data: review });
 }));
 exports.getProductReviews = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { productId } = req.params;
     const reviews = yield ReviewService.getReviewsForProduct(productId);
-    res.status(http_status_1.default.OK).json({ success: true, data: reviews });
+    res.status(statusCode_1.StatusCodes.OK).json({ success: true, data: reviews });
 }));
 exports.deleteReview = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
@@ -64,11 +64,11 @@ exports.deleteReview = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
     const userId = (_a = req === null || req === void 0 ? void 0 : req.user) === null || _a === void 0 ? void 0 : _a._id; // Assume `req.user` contains authenticated user ID
     yield ReviewService.deleteReview(reviewId, userId);
     res
-        .status(http_status_1.default.OK)
+        .status(statusCode_1.StatusCodes.OK)
         .json({ success: true, message: "Review deleted successfully" });
 }));
 exports.approveReview = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { reviewId } = req.params;
     const review = yield ReviewService.approveReview(reviewId);
-    res.status(http_status_1.default.OK).json({ success: true, data: review });
+    res.status(statusCode_1.StatusCodes.OK).json({ success: true, data: review });
 }));

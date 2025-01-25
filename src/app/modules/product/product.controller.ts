@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import httpStatus from "http-status";
+import { StatusCodes } from "../../lib/statusCode";
 import catchAsync from "../../lib/utils/catchAsync";
 import sendResponse from "../../lib/utils/sendResponse";
 import { ProductServices } from "./product.service";
@@ -10,7 +10,7 @@ const createProduct = catchAsync(async (req: Request, res: Response) => {
     message: "Product created successfully",
     success: true,
     data: response,
-    statusCode: httpStatus.CREATED,
+    statusCode: StatusCodes.CREATED,
   });
 });
 
@@ -20,7 +20,7 @@ const getAllProducts = catchAsync(async (_req: Request, res: Response) => {
     message: "Products fetched successfully",
     success: true,
     data: response,
-    statusCode: httpStatus.OK,
+    statusCode: StatusCodes.OK,
   });
 });
 
@@ -31,7 +31,7 @@ const getProductById = catchAsync(async (req: Request, res: Response) => {
     message: "Product fetched successfully",
     success: true,
     data: response,
-    statusCode: httpStatus.OK,
+    statusCode: StatusCodes.OK,
   });
 });
 
@@ -42,7 +42,7 @@ const updateProduct = catchAsync(async (req: Request, res: Response) => {
     message: "Product updated successfully",
     success: true,
     data: response,
-    statusCode: httpStatus.OK,
+    statusCode: StatusCodes.OK,
   });
 });
 
@@ -53,7 +53,7 @@ const deleteProduct = catchAsync(async (req: Request, res: Response) => {
     message: "Product deleted successfully",
     success: true,
     data: response,
-    statusCode: httpStatus.OK,
+    statusCode: StatusCodes.OK,
   });
 });
 const viewProduct = catchAsync(async (req: Request, res: Response) => {
@@ -63,7 +63,7 @@ const viewProduct = catchAsync(async (req: Request, res: Response) => {
     message: "Product view updated successfully",
     success: true,
     data: response,
-    statusCode: httpStatus.OK,
+    statusCode: StatusCodes.OK,
   });
 });
 const addProductProductImages = catchAsync(
@@ -75,7 +75,7 @@ const addProductProductImages = catchAsync(
       message: "updated Product images  successfully",
       success: true,
       data: response,
-      statusCode: httpStatus.OK,
+      statusCode: StatusCodes.OK,
     });
   }
 );
