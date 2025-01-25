@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only --watch 'src//*.ts' --ignore 'src/migrations' src/server.ts",
     "start": "node ./dist/server.js",
-    "build": "tsc"
+    "build": "tsc",
+    "deploy": "yarn build && npx vercel --prod"
   },
   "keywords": [],
   "author": "",
