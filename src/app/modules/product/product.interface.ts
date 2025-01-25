@@ -6,7 +6,15 @@ export interface IDiscount {
   validFrom: Date;
   validTo: Date;
 }
-
+export interface IProductDetails {
+  material: string; // Material of the product (e.g., Cotton, Polyester)
+  brand: string; // Brand name
+  careInstructions: string[]; // Care instructions for the product
+  originCountry: string; // Country where the product was made
+  fitType?: "regular" | "slim" | "relaxed"; // Fit type
+  occasion?: "casual" | "formal" | "party" | "sports"; // Suitable occasion
+  pattern?: string; // Pattern (e.g., solid, striped, checked)
+}
 export interface IInventory {
   stock: number;
   reservedStock?: number;
@@ -61,4 +69,5 @@ export interface IProduct extends Document {
   sizes: Sizes[];
   availableSizes: Sizes[];
   colors: string[];
+  productDetails: IProductDetails;
 }
