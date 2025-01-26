@@ -86,3 +86,6 @@ export const ProductServices = {
     return await Product.findByIdAndUpdate(id, { isActive: false });
   },
 };
+// https://i.ibb.co.com/9cDVwXG/men-shirt-1.png
+//women https://i.ibb.co.com/9cDVwXG/men-shirt-1.png
+//

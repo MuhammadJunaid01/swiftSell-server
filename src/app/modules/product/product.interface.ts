@@ -66,7 +66,7 @@ export interface IProduct extends Document {
   metaDescription?: string;
   deletedAt?: Date;
   color: string;
-  sizes: Sizes[];
+  size: Sizes;
   availableSizes: Sizes[];
   colors: string[];
   productDetails: IProductDetails;
