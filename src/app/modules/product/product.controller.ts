@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
+import { paginationOption } from "../../../shared/constant";
+import pick from "../../../shared/pick";
 import { StatusCodes } from "../../lib/statusCode";
 import catchAsync from "../../lib/utils/catchAsync";
 import sendResponse from "../../lib/utils/sendResponse";
+import { CategoryFilterableFields } from "../category/category.constant";
 import { DeviceType } from "./product.interface";
 import { ProductServices } from "./product.service";
 
@@ -15,10 +18,13 @@ const createProduct = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const getAllProducts = catchAsync(async (req: Request, res: Response) => {
-  console.log("req?.deviceType", req?.deviceType);
-
-  const response = await ProductServices.getAllProducts();
+const getAllProducts = catchAsync(async (_req: Request, res: Response) => {
+  const paginationOptions = pick(_req.query, paginationOption);
+  const filters = pick(_req.query, CategoryFilterableFields);
+  const response = await ProductServices.getAllProducts(
+    filters,
+    paginationOptions
+  );
   sendResponse(res, {
     message: "Products fetched successfully",
     success: true,

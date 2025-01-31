@@ -6,6 +6,7 @@ interface IOptionWithSkip extends IPaginationOption {
 export const paginationHelper = (
   option: IPaginationOption
 ): IOptionWithSkip => {
+  console.log("option ghgfhgfhgf", option);
   const page = Number(option.page) || 1;
   const limit = Number(option.limit) || 30;
   const skip = (page - 1) * limit;

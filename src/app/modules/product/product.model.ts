@@ -1,6 +1,7 @@
 import mongoose, { model, Query, Schema } from "mongoose";
 import { IProduct, IProductDetails } from "./product.interface";
 
+// Product Details Schema
 const ProductDetailsSchema = new Schema<IProductDetails>(
   {
     material: { type: String, required: true },
@@ -13,6 +14,8 @@ const ProductDetailsSchema = new Schema<IProductDetails>(
   },
   { _id: false }
 );
+
+// Product Schema
 const ProductSchema: Schema<IProduct> = new Schema(
   {
     name: { type: String, required: true, trim: true },
@@ -20,6 +23,8 @@ const ProductSchema: Schema<IProduct> = new Schema(
     description: { type: String, required: true },
     price: { type: Number, required: true },
     category: { type: Schema.Types.ObjectId, ref: "Category", required: true },
+    productId: { type: String },
+    isDeal: { type: Boolean, default: false },
     subCategory: { type: Schema.Types.ObjectId, ref: "SubCategory" },
     images: { type: [String] },
     averageRating: { type: Number, default: 0, min: 0, max: 5 },
@@ -39,9 +44,6 @@ const ProductSchema: Schema<IProduct> = new Schema(
       sku: { type: String, required: true, unique: true },
       warehouseLocation: { type: String },
     },
-    isDeal: { type: Boolean, default: false },
-    dealType: { type: String, enum: ["day", "week", "month"] },
-    dealExpiry: { type: Date },
     tags: { type: [String], default: [] },
     searchableTags: { type: [String], default: [] },
     shippingDetails: {
@@ -58,13 +60,14 @@ const ProductSchema: Schema<IProduct> = new Schema(
       },
       deliveryEstimate: { type: String, required: true },
     },
+    purchase: { type: Number, default: 0 },
     views: {
       total: { type: Number, default: 0 },
       mobile: { type: Number, default: 0 },
       desktop: { type: Number, default: 0 },
       tablet: { type: Number, default: 0 },
     },
-    isActive: { type: Boolean, default: true },
+    isDeleted: { type: Boolean, default: false },
     metaTitle: { type: String, trim: true },
     metaDescription: { type: String, trim: true },
     deletedAt: { type: Date, default: null },
@@ -74,7 +77,6 @@ const ProductSchema: Schema<IProduct> = new Schema(
     colors: { type: [String], required: true },
     productDetails: { type: ProductDetailsSchema, required: true },
   },
-
   { timestamps: true }
 );
 
@@ -91,7 +93,7 @@ ProductSchema.pre<IProduct>("save", async function (next) {
 async function generateUniqueProductId(): Promise<string> {
   const productId = Math.floor(10000000 + Math.random() * 90000000).toString();
   const existingProduct = await mongoose.models.Product.findOne({
-    id: productId,
+    productId: productId,
   });
   if (existingProduct) {
     return generateUniqueProductId();
@@ -100,15 +102,15 @@ async function generateUniqueProductId(): Promise<string> {
 }
 
 ProductSchema.pre<IProduct>("save", async function (next) {
-  if (!this.id) {
-    this.id = await generateUniqueProductId();
+  if (!this.productId) {
+    this.productId = await generateUniqueProductId();
   }
   next();
 });
 
 // Soft delete and filtering for active products
 ProductSchema.pre<Query<any, IProduct>>(/^find/, function (next) {
-  this.where({ isActive: true });
+  this.where({ isDeleted: false });
   next();
 });
 

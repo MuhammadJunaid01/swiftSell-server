@@ -1,15 +1,12 @@
 import { Types } from "mongoose";
 import { AppError } from "../../errors/globalError";
+import { IPaginationOption } from "../../interfaces";
 import { StatusCodes } from "../../lib/statusCode";
+import { ICategoryFilterableField } from "../category/category.interface";
 import SubCategory from "../sub-category/sub-category.model";
 import { DeviceType, IProduct } from "./product.interface";
 import { Product } from "./product.model";
-type IQuery = {
-  pagination: {
-    page: number;
-    limit: number;
-  };
-};
+
 export const ProductServices = {
   createProduct: async (data: IProduct) => {
     const isExistSubcategory = await SubCategory.exists({
@@ -73,7 +70,10 @@ export const ProductServices = {
       );
     }
   },
-  getAllProducts: async () => {
+  getAllProducts: async (
+    filters: ICategoryFilterableField,
+    pagination: IPaginationOption
+  ) => {
     return await Product.find().populate("category").populate("subCategory");
   },
   getProductById: async (id: string) => {
@@ -85,7 +85,34 @@ export const ProductServices = {
   deleteProduct: async (id: string) => {
     return await Product.findByIdAndUpdate(id, { isActive: false });
   },
+  getRelatedProducts: async (
+    productId: Types.ObjectId,
+    limit: number = 5
+  ): Promise<IProduct[]> => {
+    try {
+      // Fetch the main product to use its attributes for finding related products
+      const product = await Product.findById(productId);
+
+      if (!product) {
+        throw new Error("Product not found");
+      }
+
+      // Find related products
+      const relatedProducts = await Product.find({
+        _id: { $ne: productId }, // Exclude the current product
+        isActive: true, // Only active products
+        $or: [
+          { category: product.category }, // Same category
+          { tags: { $in: product.tags } }, // At least one matching tag
+        ],
+      })
+        .limit(limit)
+        .select("name mainImage price category averageRating tags");
+
+      return relatedProducts;
+    } catch (error) {
+      console.error("Error fetching related products:", error);
+      throw error;
+    }
+  },
 };
-// https://i.ibb.co.com/9cDVwXG/men-shirt-1.png
-//women https://i.ibb.co.com/9cDVwXG/men-shirt-1.png
-//

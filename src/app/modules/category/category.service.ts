@@ -22,6 +22,7 @@ export const CategoryServices = {
     filters: ICategoryFilterableField,
     pagination: IPaginationOption
   ): Promise<IGenericResponse<ICategory[]>> => {
+    // await updateIsDeleted();
     const option = searchHelper(filters, pagination, CategorySearchableFields);
     const result = await Category.find(option.whereCondition)
       .sort(option.sortCondition)
@@ -46,4 +47,25 @@ export const CategoryServices = {
   deleteCategory: async (id: string) => {
     return await Category.findByIdAndDelete(id);
   },
+};
+const updateIsDeleted = async () => {
+  try {
+    // Fetch all categories from the database
+    const categories = await Category.find({});
+
+    // Iterate over each category and update if isDeleted is undefined
+    const updatePromises = categories.map(async (category) => {
+      if (category.isDeleted === undefined) {
+        category.isDeleted = false;
+        await category.save();
+      }
+    });
+
+    // Wait for all updates to complete
+    await Promise.all(updatePromises);
+
+    console.log("Categories updated successfully.");
+  } catch (error) {
+    console.error("Error updating categories:", error);
+  }
 };

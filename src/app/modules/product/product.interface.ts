@@ -1,4 +1,5 @@
 import { Document, Types } from "mongoose";
+
 export type DeviceType = "mobile" | "desktop" | "tablet";
 export interface IDiscount {
   type: "percentage" | "fixed";
@@ -40,18 +41,15 @@ export interface IProduct extends Document {
   name: string;
   description: string;
   price: number;
-  mainImage: string; //this is main product  image for display
+  mainImage: string; // Main product image for display
   category: Types.ObjectId;
   subCategory?: Types.ObjectId;
-  images?: string[]; //this images will be  display when use details product details as slider
+  images?: string[]; // Images to display as a slider for product details
   averageRating: number;
   reviewCount: number;
   reviews: Types.ObjectId[];
-  discount?: IDiscount;
+  discount?: IDiscount; // Optional discount information
   inventory: IInventory;
-  isDeal?: boolean;
-  dealType?: "day" | "week" | "month" | "flashSale";
-  dealExpiry?: Date;
   tags?: string[];
   searchableTags?: string[];
   shippingDetails: IShippingDetails;
@@ -60,8 +58,10 @@ export interface IProduct extends Document {
     mobile: number; // Views from mobile devices
     desktop: number; // Views from desktop devices
     tablet: number; // Views from tablet devices
+    recent: { date: Date; count: number }[]; // Recent views
   };
-  isActive: boolean;
+  purchase: number;
+  isDeleted: boolean;
   metaTitle?: string;
   metaDescription?: string;
   deletedAt?: Date;
@@ -70,4 +70,6 @@ export interface IProduct extends Document {
   availableSizes: Sizes[];
   colors: string[];
   productDetails: IProductDetails;
+  productId: string;
+  isDeal: boolean;
 }

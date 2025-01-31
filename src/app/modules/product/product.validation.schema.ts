@@ -52,14 +52,30 @@ const ProductSchema = z.object({
   metaTitle: z.string().trim().optional(),
   metaDescription: z.string().trim().optional(),
   deletedAt: z.date().nullable().default(null), // Date when product is deleted, default is null
-  sizes: z.array(z.string()).min(1, "At least one size is required"), // Sizes should be an array of strings
+  size: z.string({ required_error: "At least one size is required" }), // Sizes should be an array of strings
   availableSizes: z
     .array(z.string())
     .min(1, "At least one available size is required"), // Available sizes should also be an array of strings
   color: z.string().min(1, "Color is required"), // Color is a required field
   colors: z.array(z.string()).min(1, "At least one color is required"), // Colors should be an array of strings
 });
-
+export const createDealSchema = z.object({
+  productId: z.string({ required_error: "Product ID is required" }),
+  dealType: z
+    .string({ required_error: "Deal type is required" })
+    .refine((value) => ["day", "week", "month", "flashSale"].includes(value), {
+      message:
+        "Invalid deal type. Valid values are 'day', 'week', 'month', or 'flashSale'.",
+    }),
+  dealExpiry: z
+    .string({ required_error: "Deal expiry date is required" })
+    .refine((value) => !isNaN(Date.parse(value)), {
+      message: "Invalid date format for deal expiry.",
+    }),
+});
 export const productValidation = z.object({
   body: ProductSchema,
+});
+export const createProductDealValidation = z.object({
+  body: createDealSchema,
 });

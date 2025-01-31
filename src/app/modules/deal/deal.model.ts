@@ -41,6 +41,11 @@ const dealSchema = new Schema<IDeal>(
       type: Boolean,
       default: true,
     },
+    dealType: {
+      type: String,
+      enum: ["day", "week", "month", "flashSale"],
+      required: true,
+    },
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt fields
