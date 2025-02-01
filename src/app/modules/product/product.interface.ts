@@ -8,14 +8,29 @@ export interface IDiscount {
   validTo: Date;
 }
 export interface IProductDetails {
-  material: string; // Material of the product (e.g., Cotton, Polyester)
+  material?: string; // Material of the product (e.g., Cotton, Polyester, Metal)
   brand: string; // Brand name
-  careInstructions: string[]; // Care instructions for the product
-  originCountry: string; // Country where the product was made
-  fitType?: "regular" | "slim" | "relaxed"; // Fit type
-  occasion?: "casual" | "formal" | "party" | "sports"; // Suitable occasion
+  careInstructions?: string[]; // Care instructions for the product
+  originCountry?: string; // Country where the product was made
+  fitType?: "regular" | "slim" | "relaxed" | "compact" | "oversized"; // Fit type, extended for versatility
+  occasion?:
+    | "casual"
+    | "formal"
+    | "party"
+    | "sports"
+    | "daily use"
+    | "business"
+    | "travel"
+    | "home"; // Suitable occasions
   pattern?: string; // Pattern (e.g., solid, striped, checked)
+  features?: string[]; // Additional features (e.g., waterproof, lightweight)
+  warranty?: string; // Warranty information (e.g., "2 years", "No warranty")
+  dimensions?: string; // Dimensions of the product (e.g., "10x10x5 inches")
+  weight?: number; // Weight in kg or grams
+  additionalDetails?: Record<string, string>; // Additional key-value details
+  categorySpecific?: Record<string, any>; // Category-specific fields (dynamic structure)
 }
+
 export interface IInventory {
   stock: number;
   reservedStock?: number;

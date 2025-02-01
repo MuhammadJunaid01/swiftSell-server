@@ -71,17 +71,17 @@ export const fashionSubcategories: { name: string; image: string }[] = [
   },
 ];
 
-export const electronicsSubcategories: string[] = [
-  "Mobile Phones",
-  "Laptops",
-  "Tablets",
-  "Televisions",
-  "Cameras",
-  "Headphones",
-  "Smartwatches",
-  "Gaming Consoles",
-  "Drones",
-  "Home Audio",
+export const electronicsSubcategories: { name: string; image: string }[] = [
+  { name: "Mobile Phones", image: "https://i.ibb.co.com/0RP9T9dV/mobile.webp" },
+  { name: "Laptops", image: "https://i.ibb.co.com/7dWggwXZ/laptop.webp" },
+  { name: "Tablets", image: "path/to/tablets_image.jpg" },
+  { name: "Televisions", image: "path/to/televisions_image.jpg" },
+  { name: "Cameras", image: "path/to/cameras_image.jpg" },
+  { name: "Headphones", image: "path/to/headphones_image.jpg" },
+  { name: "Smartwatches", image: "path/to/smartwatches_image.jpg" },
+  { name: "Gaming Consoles", image: "path/to/gaming_consoles_image.jpg" },
+  { name: "Drones", image: "path/to/drones_image.jpg" },
+  { name: "Home Audio", image: "path/to/home_audio_image.jpg" },
 ];
 
 export const appliancesSubcategories: string[] = [

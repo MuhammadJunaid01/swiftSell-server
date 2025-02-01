@@ -4,13 +4,44 @@ import { IProduct, IProductDetails } from "./product.interface";
 // Product Details Schema
 const ProductDetailsSchema = new Schema<IProductDetails>(
   {
-    material: { type: String, required: true },
-    brand: { type: String, required: true },
-    careInstructions: { type: [String], required: true },
-    originCountry: { type: String, required: true },
-    fitType: { type: String, enum: ["regular", "slim", "relaxed"] },
-    occasion: { type: String, enum: ["casual", "formal", "party", "sports"] },
-    pattern: { type: String },
+    material: { type: String }, // Common for most products
+    brand: { type: String, required: true }, // Mandatory for all categories
+    careInstructions: { type: [String] }, // Optional; relevant for apparel, electronics, etc.
+    originCountry: { type: String }, // Common for most products
+    fitType: {
+      type: String,
+      enum: ["regular", "slim", "relaxed", "compact", "oversized"],
+      default: "regular",
+    }, // Specific to clothing, furniture, or similar categories
+    occasion: {
+      type: String,
+      enum: [
+        "casual",
+        "formal",
+        "party",
+        "sports",
+        "daily use",
+        "business",
+        "travel",
+        "home",
+      ],
+    }, // Context-based usage
+    pattern: { type: String }, // Design patterns (e.g., "striped", "solid")
+    features: { type: [String] }, // Additional features (e.g., "waterproof", "portable")
+    warranty: {
+      type: String,
+      default: "No warranty",
+    }, // Product warranty information
+    dimensions: { type: String }, // Physical dimensions for products like electronics, furniture
+    weight: { type: Number }, // Weight in kg or grams
+    additionalDetails: {
+      type: Map,
+      of: String,
+    }, // Customizable key-value pairs
+    categorySpecific: {
+      type: Map,
+      of: Schema.Types.Mixed,
+    }, // Dynamic fields based on the category
   },
   { _id: false }
 );
