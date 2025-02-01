@@ -36,6 +36,14 @@ const getAllSubCategoriesFromDB = () => __awaiter(void 0, void 0, void 0, functi
 });
 exports.getAllSubCategoriesFromDB = getAllSubCategoriesFromDB;
 const getSubCategoriesByCategoryFromDB = (categoryId) => __awaiter(void 0, void 0, void 0, function* () {
+    // electronicsSubcategories.forEach(async ({ name, image }) => {
+    //   await new SubCategory({
+    //     name: name,
+    //     image: image,
+    //     category: categoryId,
+    //   }).save();
+    // });
+    // return "lkjlkjkljkl";
     return yield sub_category_model_1.default.find({ category: categoryId }).exec();
 });
 exports.getSubCategoriesByCategoryFromDB = getSubCategoriesByCategoryFromDB;

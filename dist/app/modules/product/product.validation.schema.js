@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.productValidation = void 0;
+exports.createProductDealValidation = exports.productValidation = exports.createDealSchema = void 0;
 // productSchemas.ts
 const zod_1 = require("zod");
 const ProductSchema = zod_1.z.object({
@@ -54,13 +54,29 @@ const ProductSchema = zod_1.z.object({
     metaTitle: zod_1.z.string().trim().optional(),
     metaDescription: zod_1.z.string().trim().optional(),
     deletedAt: zod_1.z.date().nullable().default(null), // Date when product is deleted, default is null
-    sizes: zod_1.z.array(zod_1.z.string()).min(1, "At least one size is required"), // Sizes should be an array of strings
+    size: zod_1.z.string({ required_error: "At least one size is required" }), // Sizes should be an array of strings
     availableSizes: zod_1.z
         .array(zod_1.z.string())
         .min(1, "At least one available size is required"), // Available sizes should also be an array of strings
     color: zod_1.z.string().min(1, "Color is required"), // Color is a required field
     colors: zod_1.z.array(zod_1.z.string()).min(1, "At least one color is required"), // Colors should be an array of strings
 });
+exports.createDealSchema = zod_1.z.object({
+    productId: zod_1.z.string({ required_error: "Product ID is required" }),
+    dealType: zod_1.z
+        .string({ required_error: "Deal type is required" })
+        .refine((value) => ["day", "week", "month", "flashSale"].includes(value), {
+        message: "Invalid deal type. Valid values are 'day', 'week', 'month', or 'flashSale'.",
+    }),
+    dealExpiry: zod_1.z
+        .string({ required_error: "Deal expiry date is required" })
+        .refine((value) => !isNaN(Date.parse(value)), {
+        message: "Invalid date format for deal expiry.",
+    }),
+});
 exports.productValidation = zod_1.z.object({
     body: ProductSchema,
+});
+exports.createProductDealValidation = zod_1.z.object({
+    body: exports.createDealSchema,
 });

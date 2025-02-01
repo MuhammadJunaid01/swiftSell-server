@@ -31,7 +31,8 @@ exports.createDealController = (0, catchAsync_1.default)((req, res) => __awaiter
 }));
 // Get all deals
 exports.getAllDealsController = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const deals = yield (0, deal_service_1.getAllDeals)();
+    const query = req.query;
+    const deals = yield (0, deal_service_1.getAllDeals)(query);
     (0, sendResponse_1.default)(res, {
         statusCode: statusCode_1.StatusCodes.OK,
         success: true,

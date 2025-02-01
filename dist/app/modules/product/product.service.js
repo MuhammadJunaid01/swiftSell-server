@@ -54,7 +54,7 @@ exports.ProductServices = {
             throw new globalError_1.AppError(`Failed to delete image: ${error.message}`, statusCode_1.StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }),
-    getAllProducts: () => __awaiter(void 0, void 0, void 0, function* () {
+    getAllProducts: (filters, pagination) => __awaiter(void 0, void 0, void 0, function* () {
         return yield product_model_1.Product.find().populate("category").populate("subCategory");
     }),
     getProductById: (id) => __awaiter(void 0, void 0, void 0, function* () {
@@ -65,5 +65,30 @@ exports.ProductServices = {
     }),
     deleteProduct: (id) => __awaiter(void 0, void 0, void 0, function* () {
         return yield product_model_1.Product.findByIdAndUpdate(id, { isActive: false });
+    }),
+    getRelatedProducts: (productId_1, ...args_1) => __awaiter(void 0, [productId_1, ...args_1], void 0, function* (productId, limit = 5) {
+        try {
+            // Fetch the main product to use its attributes for finding related products
+            const product = yield product_model_1.Product.findById(productId);
+            if (!product) {
+                throw new Error("Product not found");
+            }
+            // Find related products
+            const relatedProducts = yield product_model_1.Product.find({
+                _id: { $ne: productId }, // Exclude the current product
+                isActive: true, // Only active products
+                $or: [
+                    { category: product.category }, // Same category
+                    { tags: { $in: product.tags } }, // At least one matching tag
+                ],
+            })
+                .limit(limit)
+                .select("name mainImage price category averageRating tags");
+            return relatedProducts;
+        }
+        catch (error) {
+            console.error("Error fetching related products:", error);
+            throw error;
+        }
     }),
 };

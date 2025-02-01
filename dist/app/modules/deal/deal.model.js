@@ -47,9 +47,15 @@ const dealSchema = new mongoose_1.Schema({
     },
     products: [
         {
-            type: mongoose_1.default.Schema.Types.ObjectId,
-            ref: "Product",
-            required: [true, "Products are required for the deal"],
+            productId: {
+                type: mongoose_1.default.Schema.Types.ObjectId,
+                ref: "Product",
+                required: true,
+            },
+            discount: {
+                type: Number,
+                required: true,
+            },
         },
     ],
     dealStartDate: {
@@ -73,6 +79,11 @@ const dealSchema = new mongoose_1.Schema({
     isActive: {
         type: Boolean,
         default: true,
+    },
+    dealType: {
+        type: String,
+        enum: ["day", "week", "month", "flashSale"],
+        required: true,
     },
 }, {
     timestamps: true, // Automatically adds createdAt and updatedAt fields
