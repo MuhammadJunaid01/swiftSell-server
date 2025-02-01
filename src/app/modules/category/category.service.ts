@@ -18,25 +18,23 @@ export const CategoryServices = {
       await new Category({ name: category.name, image: category.image }).save();
     });
   },
-  getAllCategories: async (
-    filters: ICategoryFilterableField,
-    pagination: IPaginationOption
-  ): Promise<IGenericResponse<ICategory[]>> => {
-    // await updateIsDeleted();
-    const option = searchHelper(filters, pagination, CategorySearchableFields);
-    const result = await Category.find(option.whereCondition)
-      .sort(option.sortCondition)
-      .skip(option.skip)
-      .limit(option.limit as number);
-    const total = await Category.countDocuments(option.whereCondition);
-    return {
-      meta: {
-        limit: option.limit,
-        page: option.page,
-        total,
-      },
-      data: result,
-    };
+  getAllCategories: async () => {
+    // // await updateIsDeleted();
+    // const option = searchHelper(filters, pagination, CategorySearchableFields);
+    // const result = await Category.find(option.whereCondition)
+    //   .sort(option.sortCondition)
+    //   .skip(option.skip)
+    //   .limit(option.limit as number);
+    // const total = await Category.countDocuments(option.whereCondition);
+    // return {
+    //   meta: {
+    //     limit: option.limit,
+    //     page: option.page,
+    //     total,
+    //   },
+    //   data: result,
+    // };
+    return await Category.find({}).exec();
   },
   getCategoryById: async (id: string) => {
     return await Category.findById(id);

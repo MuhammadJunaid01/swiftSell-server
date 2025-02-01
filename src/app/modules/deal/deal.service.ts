@@ -1,3 +1,4 @@
+import { match } from "assert";
 import mongoose, { Types } from "mongoose";
 import { AppError } from "../../errors/globalError";
 import { Product } from "../product/product.model";
@@ -73,15 +74,23 @@ export const createDeal = async (dealData: IDeal) => {
 export const getAllDeals = async (query: any) => {
   try {
     const dealType = query.dealType;
+    console.log("query", query);
+    const categoryId = query?.categoryId;
 
     // Build the query object for filtering based on dealType
     const filter: any = {};
+    if (categoryId) {
+      filter.categoryId = categoryId;
+    }
     if (dealType) {
       filter.dealType = dealType;
     }
-
+    console.log(filter);
     // Fetch deals based on the filter
-    const deals = await Deal.find(filter).populate("products.productId");
+    const deals = await Deal.find(filter).populate({
+      path: "products.productId",
+      populate: { path: "category" }, // Populate product category with the name field
+    });
 
     // If `dealType` is present, extract only the products along with dealStartDate and dealEndDate
     if (dealType) {
