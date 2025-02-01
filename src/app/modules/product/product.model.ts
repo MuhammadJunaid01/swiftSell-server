@@ -32,12 +32,14 @@ const ProductSchema: Schema<IProduct> = new Schema(
     reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: "Review" }],
     discount: {
       type: {
-        type: { type: String, enum: ["percentage", "fixed"] },
-        value: { type: Number },
-        validFrom: { type: Date },
-        validTo: { type: Date },
+        type: String, // Define `type` directly within the object
+        enum: ["percentage", "fixed"], // Enum for allowed types
       },
+      value: { type: Number }, // Discount value
+      validFrom: { type: Date }, // Discount valid-from date
+      validTo: { type: Date }, // Discount valid-to date
     },
+
     inventory: {
       stock: { type: Number, required: true },
       reservedStock: { type: Number, default: 0 },

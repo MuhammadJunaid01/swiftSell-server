@@ -5,29 +5,31 @@ import { IDeal } from "./deal.interface";
 import { Deal } from "./deal.model";
 
 // Create a new deal
+
 export const createDeal = async (dealData: IDeal) => {
   const session = await mongoose.startSession();
   session.startTransaction();
-
   try {
-    // Extract product IDs from the deal data
-    const productIds = dealData.products.map((item) => item.productId);
+    // Extract productIds and discounts from the deal data
+    const dealProducts = dealData.products;
 
     // Fetch and validate products
     const products = await Product.find({
-      _id: { $in: productIds },
+      _id: { $in: dealProducts.map((item) => item.productId) },
     }).session(session);
 
-    if (products.length !== productIds.length) {
-      throw new Error("Some products in the deal do not exist.");
+    if (products.length !== dealProducts.length) {
+      throw new AppError("Some products in the deal do not exist.", 400);
     }
 
     // Update product deal-related fields
     await Promise.all(
       products.map(async (product: any) => {
-        const dealProduct = dealData.products.find(({ productId }) =>
+        // Find the corresponding deal product object with discount
+        const dealProduct = dealProducts.find(({ productId }) =>
           (product._id as Types.ObjectId).equals(productId)
         );
+
         if (!dealProduct) {
           throw new AppError(
             `Product with ID ${product._id} is not included in the deal data.`,
@@ -35,15 +37,16 @@ export const createDeal = async (dealData: IDeal) => {
           );
         }
 
-        // Update product discount and other deal-related fields
-        product.isDeal = true;
-        product.discount = {
-          type: dealData.discountType,
-          value: dealProduct.discount,
-          validFrom: dealData.dealStartDate,
-          validTo: dealData.dealEndDate,
+        // Construct and validate the discount object
+        const discount = {
+          type: dealData.discountType as "percentage" | "fixed", // Enum type for validation
+          value: Number(dealProduct.discount), // Ensure value is a number
+          validFrom: new Date(dealData.dealStartDate), // Ensure valid date
+          validTo: new Date(dealData.dealEndDate), // Ensure valid date
         };
-        product.dealExpiry = dealData.dealEndDate;
+
+        product.isDeal = true;
+        product.discount = discount; // Assign the constructed discount object
 
         await product.save({ session });
       })
@@ -59,17 +62,42 @@ export const createDeal = async (dealData: IDeal) => {
   } catch (error: any) {
     // Rollback transaction on error
     await session.abortTransaction();
-    throw new Error(`Error creating deal: ${error.message}`);
+    console.log("error.message", error.message);
+    throw new AppError(`Error creating deal: ${error.message}`, 500);
   } finally {
     session.endSession();
   }
 };
 
 // Get all deals
-export const getAllDeals = async () => {
+export const getAllDeals = async (query: any) => {
   try {
-    return await Deal.find().populate("products.productId");
+    const dealType = query.dealType;
+
+    // Build the query object for filtering based on dealType
+    const filter: any = {};
+    if (dealType) {
+      filter.dealType = dealType;
+    }
+
+    // Fetch deals based on the filter
+    const deals = await Deal.find(filter).populate("products.productId");
+
+    // If `dealType` is present, extract only the products along with dealStartDate and dealEndDate
+    if (dealType) {
+      const products = deals.flatMap((deal) =>
+        deal.products.map((product) => product.productId)
+      );
+      // Returning an object with products, dealEndDate, and dealStartDate
+      const dealStartDate = deals[0]?.dealStartDate;
+      const dealEndDate = deals[0]?.dealEndDate;
+      return { products, dealStartDate, dealEndDate };
+    }
+
+    // If no `dealType` filter is present, return the entire deal data
+    return deals;
   } catch (error: any) {
+    console.error("Error fetching deals:", error.message);
     throw new Error(`Error fetching deals: ${error.message}`);
   }
 };

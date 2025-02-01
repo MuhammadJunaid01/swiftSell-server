@@ -29,7 +29,8 @@ export const createDealController = catchAsync(
 // Get all deals
 export const getAllDealsController = catchAsync(
   async (req: Request, res: Response) => {
-    const deals = await getAllDeals();
+    const query = req.query;
+    const deals = await getAllDeals(query);
 
     sendResponse(res, {
       statusCode: StatusCodes.OK,
