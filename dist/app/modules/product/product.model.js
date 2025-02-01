@@ -44,21 +44,56 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Product = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
+// Product Details Schema
 const ProductDetailsSchema = new mongoose_1.Schema({
-    material: { type: String, required: true },
-    brand: { type: String, required: true },
-    careInstructions: { type: [String], required: true },
-    originCountry: { type: String, required: true },
-    fitType: { type: String, enum: ["regular", "slim", "relaxed"] },
-    occasion: { type: String, enum: ["casual", "formal", "party", "sports"] },
-    pattern: { type: String },
+    material: { type: String }, // Common for most products
+    brand: { type: String, required: true }, // Mandatory for all categories
+    careInstructions: { type: [String] }, // Optional; relevant for apparel, electronics, etc.
+    originCountry: { type: String }, // Common for most products
+    fitType: {
+        type: String,
+        enum: ["regular", "slim", "relaxed", "compact", "oversized"],
+        default: "regular",
+    }, // Specific to clothing, furniture, or similar categories
+    occasion: {
+        type: String,
+        enum: [
+            "casual",
+            "formal",
+            "party",
+            "sports",
+            "daily use",
+            "business",
+            "travel",
+            "home",
+        ],
+    }, // Context-based usage
+    pattern: { type: String }, // Design patterns (e.g., "striped", "solid")
+    features: { type: [String] }, // Additional features (e.g., "waterproof", "portable")
+    warranty: {
+        type: String,
+        default: "No warranty",
+    }, // Product warranty information
+    dimensions: { type: String }, // Physical dimensions for products like electronics, furniture
+    weight: { type: Number }, // Weight in kg or grams
+    additionalDetails: {
+        type: Map,
+        of: String,
+    }, // Customizable key-value pairs
+    categorySpecific: {
+        type: Map,
+        of: mongoose_1.Schema.Types.Mixed,
+    }, // Dynamic fields based on the category
 }, { _id: false });
+// Product Schema
 const ProductSchema = new mongoose_1.Schema({
     name: { type: String, required: true, trim: true },
     mainImage: { type: String, required: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },
     category: { type: mongoose_1.Schema.Types.ObjectId, ref: "Category", required: true },
+    productId: { type: String },
+    isDeal: { type: Boolean, default: false },
     subCategory: { type: mongoose_1.Schema.Types.ObjectId, ref: "SubCategory" },
     images: { type: [String] },
     averageRating: { type: Number, default: 0, min: 0, max: 5 },
@@ -66,11 +101,12 @@ const ProductSchema = new mongoose_1.Schema({
     reviews: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: "Review" }],
     discount: {
         type: {
-            type: { type: String, enum: ["percentage", "fixed"] },
-            value: { type: Number },
-            validFrom: { type: Date },
-            validTo: { type: Date },
+            type: String, // Define `type` directly within the object
+            enum: ["percentage", "fixed"], // Enum for allowed types
         },
+        value: { type: Number }, // Discount value
+        validFrom: { type: Date }, // Discount valid-from date
+        validTo: { type: Date }, // Discount valid-to date
     },
     inventory: {
         stock: { type: Number, required: true },
@@ -78,9 +114,6 @@ const ProductSchema = new mongoose_1.Schema({
         sku: { type: String, required: true, unique: true },
         warehouseLocation: { type: String },
     },
-    isDeal: { type: Boolean, default: false },
-    dealType: { type: String, enum: ["day", "week", "month"] },
-    dealExpiry: { type: Date },
     tags: { type: [String], default: [] },
     searchableTags: { type: [String], default: [] },
     shippingDetails: {
@@ -97,17 +130,18 @@ const ProductSchema = new mongoose_1.Schema({
         },
         deliveryEstimate: { type: String, required: true },
     },
+    purchase: { type: Number, default: 0 },
     views: {
         total: { type: Number, default: 0 },
         mobile: { type: Number, default: 0 },
         desktop: { type: Number, default: 0 },
         tablet: { type: Number, default: 0 },
     },
-    isActive: { type: Boolean, default: true },
+    isDeleted: { type: Boolean, default: false },
     metaTitle: { type: String, trim: true },
     metaDescription: { type: String, trim: true },
     deletedAt: { type: Date, default: null },
-    sizes: { type: [String], required: true },
+    size: { type: String, required: true },
     availableSizes: { type: [String], required: true },
     color: { type: String, required: true },
     colors: { type: [String], required: true },
@@ -128,7 +162,7 @@ function generateUniqueProductId() {
     return __awaiter(this, void 0, void 0, function* () {
         const productId = Math.floor(10000000 + Math.random() * 90000000).toString();
         const existingProduct = yield mongoose_1.default.models.Product.findOne({
-            id: productId,
+            productId: productId,
         });
         if (existingProduct) {
             return generateUniqueProductId();
@@ -138,15 +172,15 @@ function generateUniqueProductId() {
 }
 ProductSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!this.id) {
-            this.id = yield generateUniqueProductId();
+        if (!this.productId) {
+            this.productId = yield generateUniqueProductId();
         }
         next();
     });
 });
 // Soft delete and filtering for active products
 ProductSchema.pre(/^find/, function (next) {
-    this.where({ isActive: true });
+    this.where({ isDeleted: false });
     next();
 });
 exports.Product = (0, mongoose_1.model)("Product", ProductSchema);

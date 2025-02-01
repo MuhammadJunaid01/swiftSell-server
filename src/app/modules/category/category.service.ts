@@ -18,24 +18,23 @@ export const CategoryServices = {
       await new Category({ name: category.name, image: category.image }).save();
     });
   },
-  getAllCategories: async (
-    filters: ICategoryFilterableField,
-    pagination: IPaginationOption
-  ): Promise<IGenericResponse<ICategory[]>> => {
-    const option = searchHelper(filters, pagination, CategorySearchableFields);
-    const result = await Category.find(option.whereCondition)
-      .sort(option.sortCondition)
-      .skip(option.skip)
-      .limit(option.limit as number);
-    const total = await Category.countDocuments(option.whereCondition);
-    return {
-      meta: {
-        limit: option.limit,
-        page: option.page,
-        total,
-      },
-      data: result,
-    };
+  getAllCategories: async () => {
+    // // await updateIsDeleted();
+    // const option = searchHelper(filters, pagination, CategorySearchableFields);
+    // const result = await Category.find(option.whereCondition)
+    //   .sort(option.sortCondition)
+    //   .skip(option.skip)
+    //   .limit(option.limit as number);
+    // const total = await Category.countDocuments(option.whereCondition);
+    // return {
+    //   meta: {
+    //     limit: option.limit,
+    //     page: option.page,
+    //     total,
+    //   },
+    //   data: result,
+    // };
+    return await Category.find({}).exec();
   },
   getCategoryById: async (id: string) => {
     return await Category.findById(id);
@@ -46,4 +45,25 @@ export const CategoryServices = {
   deleteCategory: async (id: string) => {
     return await Category.findByIdAndDelete(id);
   },
+};
+const updateIsDeleted = async () => {
+  try {
+    // Fetch all categories from the database
+    const categories = await Category.find({});
+
+    // Iterate over each category and update if isDeleted is undefined
+    const updatePromises = categories.map(async (category) => {
+      if (category.isDeleted === undefined) {
+        category.isDeleted = false;
+        await category.save();
+      }
+    });
+
+    // Wait for all updates to complete
+    await Promise.all(updatePromises);
+
+    console.log("Categories updated successfully.");
+  } catch (error) {
+    console.error("Error updating categories:", error);
+  }
 };

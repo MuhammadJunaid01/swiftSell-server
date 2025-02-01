@@ -13,9 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductControllers = void 0;
+const constant_1 = require("../../../shared/constant");
+const pick_1 = __importDefault(require("../../../shared/pick"));
 const statusCode_1 = require("../../lib/statusCode");
 const catchAsync_1 = __importDefault(require("../../lib/utils/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../lib/utils/sendResponse"));
+const category_constant_1 = require("../category/category.constant");
 const product_service_1 = require("./product.service");
 const createProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield product_service_1.ProductServices.createProduct(req.body);
@@ -26,9 +29,10 @@ const createProduct = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
         statusCode: statusCode_1.StatusCodes.CREATED,
     });
 }));
-const getAllProducts = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("req?.deviceType", req === null || req === void 0 ? void 0 : req.deviceType);
-    const response = yield product_service_1.ProductServices.getAllProducts();
+const getAllProducts = (0, catchAsync_1.default)((_req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const paginationOptions = (0, pick_1.default)(_req.query, constant_1.paginationOption);
+    const filters = (0, pick_1.default)(_req.query, category_constant_1.CategoryFilterableFields);
+    const response = yield product_service_1.ProductServices.getAllProducts(filters, paginationOptions);
     (0, sendResponse_1.default)(res, {
         message: "Products fetched successfully",
         success: true,

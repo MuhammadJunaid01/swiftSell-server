@@ -47,11 +47,11 @@ export const searchHelper = <IFilters extends ISearchableFields>(
   }
 
   // Add isDeleted: false to where condition
-  if (!isDeleted) {
-    andCondition.push({
-      isDeleted: false,
-    });
-  }
+  // if (!isDeleted) {
+  //   andCondition.push({
+  //     isDeleted: false,
+  //   });
+  // }
 
   const { page, limit, skip, sortBy, sortOrder } = paginationHelper(pagination);
 

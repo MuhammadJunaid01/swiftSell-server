@@ -14,9 +14,15 @@ const dealSchema = new Schema<IDeal>(
     },
     products: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-        required: [true, "Products are required for the deal"],
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+          required: true,
+        },
+        discount: {
+          type: Number,
+          required: true,
+        },
       },
     ],
     dealStartDate: {
@@ -40,6 +46,11 @@ const dealSchema = new Schema<IDeal>(
     isActive: {
       type: Boolean,
       default: true,
+    },
+    dealType: {
+      type: String,
+      enum: ["day", "week", "month", "flashSale"],
+      required: true,
     },
   },
   {

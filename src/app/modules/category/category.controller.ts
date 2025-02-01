@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
+import { paginationOption } from "../../../shared/constant";
+import pick from "../../../shared/pick";
 import { StatusCodes } from "../../lib/statusCode";
 import catchAsync from "../../lib/utils/catchAsync";
 import sendResponse from "../../lib/utils/sendResponse";
-import { CategoryServices } from "./category.service";
-import pick from "../../../shared/pick";
 import { CategoryFilterableFields } from "./category.constant";
-import { paginationOption } from "../../../shared/constant";
+import { CategoryServices } from "./category.service";
 //
 const createCategory = catchAsync(async (req: Request, res: Response) => {
   const response = await CategoryServices.createCategory(req.body);
@@ -29,6 +29,7 @@ const createCategories = catchAsync(async (req: Request, res: Response) => {
 const getAllCategories = catchAsync(async (_req: Request, res: Response) => {
   const paginationOptions = pick(_req.query, paginationOption);
   const filters = pick(_req.query, CategoryFilterableFields);
+  console.log("paginationOptions", paginationOptions);
   const response = await CategoryServices.getAllCategories(
     filters,
     paginationOptions

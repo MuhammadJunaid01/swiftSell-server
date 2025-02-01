@@ -1,4 +1,5 @@
 import { Document, Types } from "mongoose";
+
 export type DeviceType = "mobile" | "desktop" | "tablet";
 export interface IDiscount {
   type: "percentage" | "fixed";
@@ -7,14 +8,29 @@ export interface IDiscount {
   validTo: Date;
 }
 export interface IProductDetails {
-  material: string; // Material of the product (e.g., Cotton, Polyester)
+  material?: string; // Material of the product (e.g., Cotton, Polyester, Metal)
   brand: string; // Brand name
-  careInstructions: string[]; // Care instructions for the product
-  originCountry: string; // Country where the product was made
-  fitType?: "regular" | "slim" | "relaxed"; // Fit type
-  occasion?: "casual" | "formal" | "party" | "sports"; // Suitable occasion
+  careInstructions?: string[]; // Care instructions for the product
+  originCountry?: string; // Country where the product was made
+  fitType?: "regular" | "slim" | "relaxed" | "compact" | "oversized"; // Fit type, extended for versatility
+  occasion?:
+    | "casual"
+    | "formal"
+    | "party"
+    | "sports"
+    | "daily use"
+    | "business"
+    | "travel"
+    | "home"; // Suitable occasions
   pattern?: string; // Pattern (e.g., solid, striped, checked)
+  features?: string[]; // Additional features (e.g., waterproof, lightweight)
+  warranty?: string; // Warranty information (e.g., "2 years", "No warranty")
+  dimensions?: string; // Dimensions of the product (e.g., "10x10x5 inches")
+  weight?: number; // Weight in kg or grams
+  additionalDetails?: Record<string, string>; // Additional key-value details
+  categorySpecific?: Record<string, any>; // Category-specific fields (dynamic structure)
 }
+
 export interface IInventory {
   stock: number;
   reservedStock?: number;
@@ -40,18 +56,15 @@ export interface IProduct extends Document {
   name: string;
   description: string;
   price: number;
-  mainImage: string; //this is main product  image for display
+  mainImage: string; // Main product image for display
   category: Types.ObjectId;
   subCategory?: Types.ObjectId;
-  images?: string[]; //this images will be  display when use details product details as slider
+  images?: string[]; // Images to display as a slider for product details
   averageRating: number;
   reviewCount: number;
   reviews: Types.ObjectId[];
-  discount?: IDiscount;
+  discount?: IDiscount; // Optional discount information
   inventory: IInventory;
-  isDeal?: boolean;
-  dealType?: "day" | "week" | "month" | "flashSale";
-  dealExpiry?: Date;
   tags?: string[];
   searchableTags?: string[];
   shippingDetails: IShippingDetails;
@@ -60,14 +73,18 @@ export interface IProduct extends Document {
     mobile: number; // Views from mobile devices
     desktop: number; // Views from desktop devices
     tablet: number; // Views from tablet devices
+    recent: { date: Date; count: number }[]; // Recent views
   };
-  isActive: boolean;
+  purchase: number;
+  isDeleted: boolean;
   metaTitle?: string;
   metaDescription?: string;
   deletedAt?: Date;
   color: string;
-  sizes: Sizes[];
+  size: Sizes;
   availableSizes: Sizes[];
   colors: string[];
   productDetails: IProductDetails;
+  productId: string;
+  isDeal: boolean;
 }

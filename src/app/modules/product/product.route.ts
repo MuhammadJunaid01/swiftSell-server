@@ -3,7 +3,10 @@ import authGuard from "../../middlewares/authMiddleware";
 import { validateRequest } from "../../middlewares/validateRequest";
 import { Role } from "../user/user.interface";
 import { ProductControllers } from "./product.controller";
-import { productValidation } from "./product.validation.schema";
+import {
+  createProductDealValidation,
+  productValidation,
+} from "./product.validation.schema";
 
 const router = Router();
 
