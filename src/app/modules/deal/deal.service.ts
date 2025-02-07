@@ -1,4 +1,3 @@
-import { match } from "assert";
 import mongoose, { Types } from "mongoose";
 import { AppError } from "../../errors/globalError";
 import { Product } from "../product/product.model";
@@ -11,22 +10,45 @@ export const createDeal = async (dealData: IDeal) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    // Extract productIds and discounts from the deal data
+    // Extract productIds from the deal data
     const dealProducts = dealData.products;
 
     // Fetch and validate products
     const products = await Product.find({
       _id: { $in: dealProducts.map((item) => item.productId) },
-    }).session(session);
+    })
+      .select("_id  category") // Only fetch _id and categoryId to optimize query
+      .session(session);
 
     if (products.length !== dealProducts.length) {
       throw new AppError("Some products in the deal do not exist.", 400);
     }
 
+    // Update the dealProducts array with categoryId
+    const updatedDealProducts = dealProducts.map((dealProduct) => {
+      const product = products.find((prod) =>
+        (prod._id as Types.ObjectId).equals(dealProduct.productId)
+      );
+      console.log("product", product);
+      if (!product) {
+        throw new AppError(
+          `Product with ID ${dealProduct.productId} is not included in the deal data.`,
+          400
+        );
+      }
+
+      return {
+        ...dealProduct,
+        categoryId: product.category, // Include categoryId from the product
+      };
+    });
+
+    // Update dealData with updated products
+    dealData.products = updatedDealProducts;
+
     // Update product deal-related fields
     await Promise.all(
       products.map(async (product: any) => {
-        // Find the corresponding deal product object with discount
         const dealProduct = dealProducts.find(({ productId }) =>
           (product._id as Types.ObjectId).equals(productId)
         );
@@ -73,33 +95,33 @@ export const createDeal = async (dealData: IDeal) => {
 // Get all deals
 export const getAllDeals = async (query: any) => {
   try {
-    const dealType = query.dealType;
-    console.log("query", query);
-    const categoryId = query?.categoryId;
+    const { dealType, categoryId } = query;
 
-    // Build the query object for filtering based on dealType
+    // Build the query object for filtering
     const filter: any = {};
     if (categoryId) {
-      filter.categoryId = categoryId;
+      filter["products"] = { $elemMatch: { categoryId } }; // Filter by categoryId within products array
     }
     if (dealType) {
-      filter.dealType = dealType;
+      filter.dealType = dealType; // Filter by dealType
     }
-    console.log(filter);
+
     // Fetch deals based on the filter
     const deals = await Deal.find(filter).populate({
       path: "products.productId",
-      populate: { path: "category" }, // Populate product category with the name field
+      populate: { path: "category", select: "name" }, // Populate product category with the name field
     });
 
-    // If `dealType` is present, extract only the products along with dealStartDate and dealEndDate
     if (dealType) {
       const products = deals.flatMap((deal) =>
-        deal.products.map((product) => product.productId)
+        deal.products.map((product) => ({
+          ...product.productId._doc, // Include product details
+          discount: product.discount, // Include discount
+        }))
       );
-      // Returning an object with products, dealEndDate, and dealStartDate
       const dealStartDate = deals[0]?.dealStartDate;
       const dealEndDate = deals[0]?.dealEndDate;
+
       return { products, dealStartDate, dealEndDate };
     }
 

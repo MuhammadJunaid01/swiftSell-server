@@ -19,6 +19,11 @@ const dealSchema = new Schema<IDeal>(
           ref: "Product",
           required: true,
         },
+        categoryId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Category",
+          required: true,
+        },
         discount: {
           type: Number,
           required: true,

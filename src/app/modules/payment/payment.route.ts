@@ -11,7 +11,7 @@ import {
 const router = Router();
 
 // Route to handle payment processing
-router.post("/", handlePayment);
+router.post("/initiate", handlePayment);
 
 // Route to get a specific payment by ID
 router.get("/:id", authGuard(Role.Admin), getPaymentsByUserId);

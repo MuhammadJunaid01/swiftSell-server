@@ -17,28 +17,31 @@ const stripe = new Stripe(config.stripe_secret_key as string);
  * Process payment based on the payment method.
  */
 export const processPayment = async (data: {
-  user: string;
-  order: string;
   method: string;
-  amount: number;
-  token?: string;
   paypalOrderId?: string;
-}): Promise<IPayment> => {
-  const { user, order, method, amount, token, paypalOrderId } = data;
+}): Promise<any> => {
+  const { method } = data;
 
   let transactionId: string | undefined;
-  let status = "Pending";
 
   if (method === "Stripe") {
-    // Process Stripe Payment
-    const charge = await stripe.charges.create({
-      amount: Math.round(amount * 100), // Convert to cents
-      currency: "usd",
-      source: token,
-      description: `Payment for Order ${order}`,
+    // Use an existing Customer ID if this is a returning customer.
+    const customer = await stripe.customers.create();
+    const ephemeralKey = await stripe.ephemeralKeys.create(
+      { customer: customer.id },
+      { apiVersion: "2025-01-27.acacia" }
+    );
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: 1099,
+      currency: "eur",
+      customer: customer.id,
+      payment_method_types: ["card"], // Only allow card payments
     });
-    transactionId = charge.id;
-    status = "Completed";
+    return {
+      paymentIntent: paymentIntent.client_secret,
+      ephemeralKey: ephemeralKey.secret,
+      customer: customer.id,
+    };
   } else if (method === "PayPal") {
     // Process PayPal Payment
     // const request = new paypal.orders.OrdersCaptureRequest(paypalOrderId!);
@@ -53,19 +56,19 @@ export const processPayment = async (data: {
     throw new Error("Invalid payment method");
   }
 
-  // Create Payment Record in the Database
-  const payment = new Payment({
-    user,
-    order,
-    method,
-    amount,
-    transactionId,
-    status,
-  });
+  // // Create Payment Record in the Database
+  // const payment = new Payment({
+  //   user,
+  //   order,
+  //   method,
+  //   amount,
+  //   transactionId,
+  //   status,
+  // });
 
-  await payment.save();
+  // await payment.save();
 
-  return payment;
+  // return payment;
 };
 
 /**
