@@ -19,7 +19,7 @@ export const createShippingInfo = catchAsync(
 export const getShippingInfoByUserId = catchAsync(
   async (req: Request, res: Response) => {
     const response = await ShippingInfoServices.getShippingInfoFromDbByUserId(
-      req.params.id
+      req.params.userId
     );
     if (response.length === 0) {
       sendResponse(res, {

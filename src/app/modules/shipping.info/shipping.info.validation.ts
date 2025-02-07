@@ -10,7 +10,7 @@ export const ShippingInfoSchema = z.object({
   phoneNumber: z.string().min(1, "Phone Number is required"),
   deliveryInstructions: z.string().optional(),
   isDefault: z.boolean().optional(),
-  user: z.instanceof(Types.ObjectId),
+  user: z.string({ required_error: "user id is required" }),
 });
 export const shippingInfoValidationSchema = z.object({
   body: ShippingInfoSchema,

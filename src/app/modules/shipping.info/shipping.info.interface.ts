@@ -15,4 +15,10 @@ export interface ShippingInfo {
   isDefault?: boolean; // Optional
   user: Types.ObjectId;
   location?: Location;
+  addressType: AddressType;
+}
+export enum AddressType {
+  Home = "Home",
+  Office = "Office",
+  Other = "Other",
 }
