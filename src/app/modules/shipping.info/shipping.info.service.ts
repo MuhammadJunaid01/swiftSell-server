@@ -3,7 +3,6 @@ import { ShippingInfo } from "./shipping.info.interface";
 import { ShippingInfoModel } from "./shipping.info.model";
 
 export const createShippingInfoIntoDB = async (shippingInfo: ShippingInfo) => {
-  console.log("shippingInfo", shippingInfo);
   const response = await ShippingInfoModel.create(shippingInfo);
   return response;
 };
@@ -11,6 +10,7 @@ export const getShippingInfoFromDbByUserId = async (id: string) => {
   const response = await ShippingInfoModel.find({
     user: new Types.ObjectId(id),
   });
+  console.log("response", response);
   return response;
 };
 export const updateShippingInfoIntoDB = async (
