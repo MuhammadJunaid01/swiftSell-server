@@ -1,11 +1,14 @@
 import { Types } from "mongoose";
+import { AppError } from "../../errors/globalError";
 import { IOrder, OrderStatus } from "./order.interface";
 import { Order } from "./order.model";
 
 /**
  * Create a new order.
  */
-export const createOrder = async (orderData: Partial<IOrder>) => {
+export const createOrder = async (
+  orderData: Partial<IOrder>
+): Promise<IOrder> => {
   const order = await Order.create(orderData);
   return order;
 };
@@ -13,7 +16,7 @@ export const createOrder = async (orderData: Partial<IOrder>) => {
 /**
  * Get order by ID.
  */
-export const getOrderById = async (orderId: string) => {
+export const getOrderById = async (orderId: string): Promise<IOrder | null> => {
   const order = await Order.findOne({ orderId }).populate("items.product user");
   return order;
 };
@@ -21,7 +24,9 @@ export const getOrderById = async (orderId: string) => {
 /**
  * Get all orders for a user.
  */
-export const getOrdersByUserId = async (userId: string) => {
+export const getOrdersByUserId = async (
+  userId: string
+): Promise<IOrder[] | null> => {
   const orders = await Order.find({
     user: new Types.ObjectId(userId),
   }).populate("items.product");
@@ -31,14 +36,23 @@ export const getOrdersByUserId = async (userId: string) => {
 /**
  * Update the status of an order.
  */
+
 export const updateOrderStatus = async (
   orderId: string,
-  status: OrderStatus
-) => {
-  const updatedOrder = await Order.findOneAndUpdate(
-    { orderId },
-    { status },
-    { new: true }
-  );
-  return updatedOrder;
+  newStatus: OrderStatus
+): Promise<IOrder> => {
+  const order = await Order.findOne({ orderId });
+
+  if (!order) {
+    throw new AppError("Order not found", 404);
+  }
+
+  // Update the status and push a new record to statusRecord
+  order.status = newStatus;
+  order.statusRecord.push({ date: new Date(), status: newStatus });
+
+  // Save the updated order
+  await order.save();
+
+  return order;
 };
