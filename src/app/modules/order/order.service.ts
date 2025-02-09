@@ -1,5 +1,7 @@
-import { Types } from "mongoose";
+import { startSession, Types } from "mongoose";
 import { AppError } from "../../errors/globalError";
+import { IPayment } from "../payment/payment.interface";
+import Payment from "../payment/payment.model";
 import { IOrder, OrderStatus } from "./order.interface";
 import { Order } from "./order.model";
 
@@ -8,9 +10,61 @@ import { Order } from "./order.model";
  */
 export const createOrder = async (
   orderData: Partial<IOrder>
-): Promise<IOrder> => {
-  const order = await Order.create(orderData);
-  return order;
+): Promise<IOrder | null> => {
+  const session = await startSession();
+  session.startTransaction();
+
+  try {
+    if (orderData.isPaid) {
+      // Create the order
+      const [order] = await Order.create([{ ...orderData }], { session });
+
+      if (!order) {
+        throw new Error("Order creation failed.");
+      }
+
+      // Create the payment
+      const paymentPayload: IPayment = {
+        user: new Types.ObjectId(orderData.user),
+        order: order._id,
+        method: orderData.paymentMethod as IPayment["method"],
+        amount: orderData.totalAmount as number,
+        status: "Pending",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      const [newPayment] = await Payment.create([paymentPayload], { session });
+
+      if (!newPayment) {
+        throw new Error("Payment creation failed.");
+      }
+      console.log("newPayment  newPayment._id", newPayment._id);
+      // Assign transaction ID to the order
+      order.transactionId = newPayment._id.toString();
+
+      // Save the updated order
+      await order.save({ session });
+
+      // Commit the transaction
+      await session.commitTransaction();
+
+      return order;
+    }
+
+    const order = await Order.create(orderData);
+    return order;
+  } catch (error) {
+    await session.abortTransaction();
+    console.error("Transaction failed:", error);
+    if (error instanceof Error) {
+      throw new AppError(error.message, 500);
+    } else {
+      throw new AppError("An unknown error occurred", 500);
+    }
+  } finally {
+    session.endSession();
+  }
 };
 
 /**

@@ -12,7 +12,6 @@ const PaymentSchema = new Schema<IPayment>(
       required: true,
     },
     amount: { type: Number, required: true },
-    transactionId: { type: String }, // Optional for COD
     status: {
       type: String,
       enum: ["Pending", "Completed", "Failed", "Refunded"],

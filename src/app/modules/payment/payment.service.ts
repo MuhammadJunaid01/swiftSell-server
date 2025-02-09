@@ -1,6 +1,8 @@
 // services/payment.service.ts
 import Stripe from "stripe";
 import config from "../../config";
+import { AppError } from "../../errors/globalError";
+import User from "../user/user.model";
 import { IPayment } from "./payment.interface";
 import Payment from "./payment.model";
 
@@ -19,20 +21,33 @@ const stripe = new Stripe(config.stripe_secret_key as string);
 export const processPayment = async (data: {
   method: string;
   paypalOrderId?: string;
+  totalAmount: number;
+  userId: string;
 }): Promise<any> => {
-  const { method } = data;
-
-  let transactionId: string | undefined;
-
+  const { method, totalAmount, userId } = data;
+  console.log("data", data);
   if (method === "Stripe") {
     // Use an existing Customer ID if this is a returning customer.
-    const customer = await stripe.customers.create();
+    const user = await User.findById(userId);
+    if (!user?._id) {
+      throw new AppError("User is required for Stripe payment.", 400);
+    }
+    if (!totalAmount) {
+      throw new AppError("Amount is required for Stripe payment.", 400);
+    }
+
+    // Convert to smallest currency unit (e.g., cents)
+    const amountInCents = Math.round(totalAmount * 100);
+    const customer = await stripe.customers.create({
+      name: "junaid",
+    });
+    console.log("customer", customer);
     const ephemeralKey = await stripe.ephemeralKeys.create(
       { customer: customer.id },
       { apiVersion: "2025-01-27.acacia" }
     );
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: 1099,
+      amount: amountInCents,
       currency: "eur",
       customer: customer.id,
       payment_method_types: ["card"], // Only allow card payments
@@ -51,7 +66,6 @@ export const processPayment = async (data: {
     // status = "Completed";
   } else if (method === "CashOnDelivery") {
     // Cash on Delivery
-    transactionId = undefined; // No transaction ID for COD
   } else {
     throw new Error("Invalid payment method");
   }

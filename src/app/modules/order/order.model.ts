@@ -17,6 +17,8 @@ const generateOrderId = async (): Promise<string> => {
   return orderId;
 };
 
+// Generate a unique 8-digit paymentId
+
 const OrderSchema = new Schema<IOrder>(
   {
     orderId: { type: String, unique: true, required: true },
@@ -38,12 +40,13 @@ const OrderSchema = new Schema<IOrder>(
       enum: Object.values(OrderStatus),
       default: OrderStatus.Pending,
     },
-    shippingAddress: { type: String, required: true },
-    shippingMethod: { type: String, required: true },
-    paymentMethod: { type: String, required: true },
+    shippingAddress: { type: String },
+    shippingMethod: { type: String },
+    paymentMethod: { type: String, enum: ["COD", "Stripe"], required: true },
     isPaid: { type: Boolean, default: false },
-    paymentId: { type: String },
+    transactionId: { type: String },
     deliveredAt: { type: Date },
+    discount: { type: Number, required: true },
     statusRecord: [
       {
         date: { type: Date, required: true },
@@ -58,8 +61,8 @@ const OrderSchema = new Schema<IOrder>(
   { timestamps: true }
 );
 
-// Pre-save hook to handle orderId and statusRecord initialization
-OrderSchema.pre<IOrder>("save", async function (next) {
+// Pre-validate hook to generate unique orderId before validation
+OrderSchema.pre<IOrder>("validate", async function (next) {
   // Ensure a unique orderId is generated
   if (!this.orderId) {
     this.orderId = await generateOrderId();
