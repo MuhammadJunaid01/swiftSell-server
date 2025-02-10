@@ -1,8 +1,7 @@
-import PDFDocument from "pdfkit";
-
 import { Response } from "express";
-import { v4 as uuidv4 } from "uuid";
+import PDFDocument from "pdfkit";
 import { Invoice, LineItem } from "./invoice.interface";
+
 export const calculateTotals = (items: LineItem[]) => {
   const subtotal = items.reduce((sum, item) => sum + item.total, 0);
   const tax = subtotal * 0.1; // 10% tax rate
@@ -10,10 +9,10 @@ export const calculateTotals = (items: LineItem[]) => {
   return { subtotal, tax, total };
 };
 
-// Helper function to format currency
 export const formatCurrency = (amount: number): string => {
   return `$${amount.toFixed(2)}`;
 };
+
 export const generatePDFInvoice = (invoice: Invoice, res: Response) => {
   const doc = new PDFDocument({ margin: 50 });
 
@@ -25,123 +24,133 @@ export const generatePDFInvoice = (invoice: Invoice, res: Response) => {
   );
   doc.pipe(res);
 
-  // Helper function for text positioning
-  const textLeftPosition = 50;
-  const textRightPosition = 500;
+  const colors = {
+    header: "#1f4e79",
+    text: "#333333",
+    lightGray: "#e6e6e6",
+    total: "#1a7d1f",
+  };
 
-  // Add company logo (using a placeholder rectangle)
+  // Header
   doc
-    .rect(textLeftPosition, 50, 100, 50)
+    .fillColor(colors.header)
+    .fontSize(20)
+    .text("INVOICE", 50, 50, { align: "left" })
+    .fontSize(10)
+    .fillColor(colors.text)
+    .text(`Invoice #: ${invoice.id}`, 50, 80)
+    .text(`Date: ${invoice.date}`, 50, 95)
+    .text(`Due Date: ${invoice.dueDate}`, 50, 110);
+
+  // Company and Customer Details
+  doc
+    .fontSize(10)
+    .fillColor(colors.header)
+    .text("From:", 50, 150)
+    .fillColor(colors.text)
+    .text("Swift Sell", 50, 165)
+    .text("123 Business Street", 50, 180)
+    .text("City, State 12345", 50, 195)
+    .text("swift.sell@gmail.com", 50, 210);
+
+  doc
+    .fillColor(colors.header)
+    .text("Bill To:", 350, 150)
+    .fillColor(colors.text)
+    .text(invoice.customer.name, 350, 165)
+    .text(invoice.customer.address, 350, 180)
+    .text(invoice.customer.email, 350, 195)
+    .text(invoice.customer.phone || "", 350, 210);
+
+  // Table Headers
+  const tableTop = 250;
+  const columnWidths = [50, 150, 60, 60, 60];
+  const startX = 50;
+  const headers = ["#", "Description", "Quantity", "Unit Price", "Amount"];
+
+  doc
+    .fillColor(colors.header)
+    .fontSize(10)
+    .rect(startX, tableTop, 500, 20)
+    .fillAndStroke(colors.lightGray, colors.header)
     .stroke()
-    .fontSize(10)
-    .text("Your Logo", textLeftPosition + 30, 65);
+    .fillColor(colors.text)
+    .text(headers[0], startX + 10, tableTop + 5)
+    .text(headers[1], startX + columnWidths[0], tableTop + 5)
+    .text(headers[2], startX + columnWidths[0] + columnWidths[1], tableTop + 5)
+    .text(
+      headers[3],
+      startX + columnWidths[0] + columnWidths[1] + columnWidths[2],
+      tableTop + 5
+    )
+    .text(
+      headers[4],
+      startX +
+        columnWidths[0] +
+        columnWidths[1] +
+        columnWidths[2] +
+        columnWidths[3],
+      tableTop + 5
+    );
 
-  // Company details (right aligned)
-  doc
-    .fontSize(10)
-    .text("Your Company Name", textRightPosition, 50, { align: "right" })
-    .text("123 Business Street", textRightPosition, 65, { align: "right" })
-    .text("City, State 12345", textRightPosition, 80, { align: "right" })
-    .text("contact@company.com", textRightPosition, 95, { align: "right" });
-
-  // Invoice title and details
-  doc
-    .fontSize(24)
-    .text("INVOICE", textLeftPosition, 150)
-    .fontSize(10)
-    .text(`Invoice Number: ${invoice.id}`, textLeftPosition, 185)
-    .text(`Date: ${invoice.date}`, textLeftPosition, 200)
-    .text(`Due Date: ${invoice.dueDate}`, textLeftPosition, 215);
-
-  // Customer details
-  doc
-    .fontSize(12)
-    .text("Bill To:", textLeftPosition, 255)
-    .fontSize(10)
-    .text(invoice.customer.name, textLeftPosition, 275)
-    .text(invoice.customer.address, textLeftPosition, 290)
-    .text(invoice.customer.email, textLeftPosition, 305)
-    .text(invoice.customer.phone || "", textLeftPosition, 320);
-
-  // Items table header
-  const tableTop = 380;
-  const itemCodeX = textLeftPosition;
-  const descriptionX = textLeftPosition + 100;
-  const quantityX = textLeftPosition + 300;
-  const priceX = textLeftPosition + 400;
-  const amountX = textLeftPosition + 500;
-
-  doc
-    .fontSize(10)
-    .text("Item", itemCodeX, tableTop)
-    .text("Description", descriptionX, tableTop)
-    .text("Quantity", quantityX, tableTop)
-    .text("Price", priceX, tableTop)
-    .text("Amount", amountX, tableTop);
-
-  // Add horizontal line
-  doc
-    .moveTo(textLeftPosition, tableTop + 20)
-    .lineTo(amountX + 50, tableTop + 20)
-    .stroke();
-
-  // Items
-  let position = tableTop + 40;
+  // Table Rows
+  let rowY = tableTop + 25;
   invoice.items.forEach((item, index) => {
     doc
-      .text(`Item ${index + 1}`, itemCodeX, position)
-      .text(item.description, descriptionX, position)
-      .text(item.quantity.toString(), quantityX, position)
-      .text(formatCurrency(item.unitPrice), priceX, position)
-      .text(formatCurrency(item.total), amountX, position);
-    position += 20;
+      .fillColor(colors.text)
+      .text((index + 1).toString(), startX + 10, rowY)
+      .text(item.description, startX + columnWidths[0], rowY)
+      .text(
+        item.quantity.toString(),
+        startX + columnWidths[0] + columnWidths[1],
+        rowY
+      )
+      .text(
+        formatCurrency(item.unitPrice),
+        startX + columnWidths[0] + columnWidths[1] + columnWidths[2],
+        rowY
+      )
+      .text(
+        formatCurrency(item.total),
+        startX +
+          columnWidths[0] +
+          columnWidths[1] +
+          columnWidths[2] +
+          columnWidths[3],
+        rowY
+      );
+    rowY += 20;
   });
 
-  // Add horizontal line
-  doc
-    .moveTo(textLeftPosition, position + 10)
-    .lineTo(amountX + 50, position + 10)
-    .stroke();
-
   // Totals
-  position += 30;
+  rowY += 10;
   doc
-    .text("Subtotal:", priceX, position)
-    .text(formatCurrency(invoice.subtotal), amountX, position);
+    .fillColor(colors.header)
+    .text("Subtotal:", startX + 320, rowY)
+    .fillColor(colors.text)
+    .text(formatCurrency(invoice.subtotal), startX + 400, rowY);
 
-  position += 20;
+  rowY += 20;
   doc
-    .text("Tax (10%):", priceX, position)
-    .text(formatCurrency(invoice.tax), amountX, position);
+    .fillColor(colors.header)
+    .text("Tax (10%):", startX + 320, rowY)
+    .fillColor(colors.text)
+    .text(formatCurrency(invoice.tax), startX + 400, rowY);
 
-  position += 20;
+  rowY += 20;
   doc
+    .fillColor(colors.total)
     .fontSize(12)
-    .text("Total:", priceX, position)
-    .text(formatCurrency(invoice.total), amountX, position);
-
-  // Notes
-  if (invoice.notes) {
-    position += 60;
-    doc
-      .fontSize(10)
-      .text("Notes:", textLeftPosition, position)
-      .text(invoice.notes, textLeftPosition, position + 20);
-  }
+    .text("Total:", startX + 320, rowY)
+    .text(formatCurrency(invoice.total), startX + 400, rowY);
 
   // Footer
-  const bottomPosition = 700;
+  doc.moveTo(50, 720).lineTo(550, 720).strokeColor(colors.lightGray).stroke();
+
   doc
     .fontSize(10)
-    .text("Thank you for your business!", textLeftPosition, bottomPosition, {
-      align: "center",
-    })
-    .text(
-      "Payment is due within 30 days",
-      textLeftPosition,
-      bottomPosition + 15,
-      { align: "center" }
-    );
+    .fillColor(colors.text)
+    .text("Thank you for your business!", 50, 730, { align: "center" });
 
   // Finalize the PDF
   doc.end();
