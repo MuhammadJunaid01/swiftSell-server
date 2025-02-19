@@ -4,7 +4,7 @@ node_modules/
 # Build output directories
 
 build/
-
+.env.development.local
 # TypeScript temporary files
 *.tsbuildinfo
 
@@ -16,8 +16,6 @@ yarn-debug.log*
 yarn-error.log*
 
 # Environment variables
-.env
-.env.local
 .env.*.local
 
 # IDE-specific files
@@ -64,3 +62,4 @@ package-lock.json
 yarn.lock
 pnpm-lock.yaml
 .vercel
+config.bat
