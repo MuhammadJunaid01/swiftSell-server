@@ -4,29 +4,24 @@ import { IOrder, OrderStatus } from "./order.interface";
 // Generate a unique 8-digit order ID
 const generateOrderId = async (): Promise<string> => {
   let orderId: string;
-  let existingOrder;
-
-  // Keep generating new orderId until it is unique
   while (true) {
-    const timestamp = Date.now().toString().slice(-6); // Last 6 digits of the timestamp
-    const randomDigits = Math.floor(100 + Math.random() * 900); // Random 3-digit number
-    orderId = `${timestamp}${randomDigits}`; // Combine timestamp and random digits to form the order ID
-
-    // Check if the generated orderId already exists in the database
-    existingOrder = await Order.findOne({ orderId });
-
-    // If the orderId does not exist, break the loop and return it
+    const randomDigits = Math.floor(
+      10000000 + Math.random() * 90000000
+    ).toString(); // Generate 8-digit number
+    const existingOrder = await Order.findOne({ orderId: randomDigits });
     if (!existingOrder) {
+      orderId = randomDigits;
       break;
     }
   }
-
   return orderId;
 };
 
+// Generate a unique 8-digit paymentId
+
 const OrderSchema = new Schema<IOrder>(
   {
-    orderId: { type: String, unique: true },
+    orderId: { type: String, unique: true, required: true },
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
     items: [
       {
@@ -45,21 +40,39 @@ const OrderSchema = new Schema<IOrder>(
       enum: Object.values(OrderStatus),
       default: OrderStatus.Pending,
     },
-    shippingAddress: { type: String, required: true },
-    shippingMethod: { type: String, required: true },
-    paymentMethod: { type: String, required: true },
+    shippingAddress: { type: String },
+    shippingMethod: { type: String },
+    paymentMethod: { type: String, enum: ["COD", "Stripe"], required: true },
     isPaid: { type: Boolean, default: false },
-    paymentId: { type: String },
+    transactionId: { type: String },
     deliveredAt: { type: Date },
+    discount: { type: Number, required: true },
+    statusRecord: [
+      {
+        date: { type: Date, required: true },
+        status: {
+          type: String,
+          enum: Object.values(OrderStatus),
+          required: true,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
 
-// Pre-save hook to generate orderId automatically before saving the order
-OrderSchema.pre<IOrder>("save", async function (next) {
+// Pre-validate hook to generate unique orderId before validation
+OrderSchema.pre<IOrder>("validate", async function (next) {
+  // Ensure a unique orderId is generated
   if (!this.orderId) {
-    this.orderId = await generateOrderId(); // Set the generated orderId if it's not already set
+    this.orderId = await generateOrderId();
   }
+
+  // Initialize statusRecord with the current status if not already present
+  if (!this.statusRecord || this.statusRecord.length === 0) {
+    this.statusRecord = [{ date: new Date(), status: this.status }];
+  }
+
   next();
 });
 

@@ -16,6 +16,7 @@ type StatusRecord = {
   date: Date;
   status: OrderStatus;
 };
+type PaymentMethod = "COD" | "Stripe";
 export interface IOrder {
   orderId: string; // Unique 8-digit order ID
   user: Types.ObjectId; // User who placed the order
@@ -24,11 +25,12 @@ export interface IOrder {
   status: OrderStatus; // Current status of the order
   shippingAddress: string; // Address where the order will be shipped
   shippingMethod: string; // Shipping method (e.g., standard, express)
-  paymentMethod: string; // Payment method (e.g., credit card, PayPal)
+  paymentMethod: PaymentMethod; // Payment method (e.g., credit card, PayPal)
   createdAt?: Date; // Order creation date
   updatedAt?: Date; // Order update date
   isPaid: boolean; // Whether the order is paid or not
-  paymentId?: string; // Payment transaction ID if available
+  transactionId?: string; // Payment transaction ID if available
   deliveredAt?: Date; // When the order was delivered (if applicable)
   statusRecord: StatusRecord[];
+  discount: number;
 }

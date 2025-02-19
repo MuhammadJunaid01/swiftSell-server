@@ -25,6 +25,7 @@ const verifyOtp = catchAsync(async (req: Request, res: Response) => {
 const loginUser = catchAsync(async (req: Request, res: Response) => {
   const { email, password } = req.body;
   const response = await AuthServices.loginUserIntoDB(email, password);
+  console.log("response", response);
   sendResponse(res, {
     success: true,
     message: "successfully verified",

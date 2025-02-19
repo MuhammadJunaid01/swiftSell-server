@@ -5,6 +5,7 @@ import { bannerSliderRoutes } from "../modules/bannerSlider/bannerSlider.route";
 import { cartRouter } from "../modules/cart/cart.route";
 import { categoryRouter } from "../modules/category/category.route";
 import { dealRoutes } from "../modules/deal/deal.route";
+import { invoiceRouter } from "../modules/invoice/invoice.route";
 import { orderRouter } from "../modules/order/order.route";
 import { paymentRouter } from "../modules/payment/payment.route";
 import { productRouter } from "../modules/product/product.route";
@@ -29,6 +30,7 @@ const modules: IRoute[] = [
   { path: "/payment", route: paymentRouter },
   { path: "/shipping-info", route: shippingInfoRouter },
   { path: "/return-request", route: returnRequestRoutes },
+  { path: "/invoice", route: invoiceRouter },
 ];
 modules.forEach(({ path, route }) => router.use(path, route));
 

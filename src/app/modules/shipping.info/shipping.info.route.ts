@@ -11,7 +11,10 @@ router.post(
   validateRequest(shippingInfoValidationSchema),
   ShippingInfoControllers.createShippingInfo
 );
-router.get("/:id", ShippingInfoControllers.getShippingInfoByUserId);
+router.get(
+  "/shipping-info-by-user-id/:userId",
+  ShippingInfoControllers.getShippingInfoByUserId
+);
 router.put(
   "/:id",
   authGuard(Role.Admin),
