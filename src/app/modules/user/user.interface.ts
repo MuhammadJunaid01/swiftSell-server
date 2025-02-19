@@ -36,4 +36,5 @@ export interface IUser extends Document {
   updatedAt?: Date; // Optional: Timestamp for user updates
   refreshToken: string;
   role: Role;
+  isGoogleLogin?: boolean;
 }

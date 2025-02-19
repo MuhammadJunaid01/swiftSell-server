@@ -19,31 +19,14 @@ export const createShippingInfo = catchAsync(
 export const getShippingInfoByUserId = catchAsync(
   async (req: Request, res: Response) => {
     const response = await ShippingInfoServices.getShippingInfoFromDbByUserId(
-      req.params.id
+      req.params.userId
     );
-    if (response.length === 0) {
-      sendResponse(res, {
-        message: "No shipping info found",
-        data: [],
-        success: true,
-        statusCode: StatusCodes.OK,
-      });
-      if (response.length > 0) {
-        sendResponse(res, {
-          message: "Shipping info found",
-          data: response,
-          success: true,
-          statusCode: StatusCodes.OK,
-        });
-      } else {
-        sendResponse(res, {
-          message: "No shipping info found",
-          data: [],
-          success: true,
-          statusCode: StatusCodes.OK,
-        });
-      }
-    }
+    sendResponse(res, {
+      message: "No shipping info found",
+      data: response,
+      success: true,
+      statusCode: StatusCodes.OK,
+    });
   }
 );
 export const shippingInfoUpdate = catchAsync(

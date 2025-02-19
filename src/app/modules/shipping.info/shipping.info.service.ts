@@ -10,6 +10,7 @@ export const getShippingInfoFromDbByUserId = async (id: string) => {
   const response = await ShippingInfoModel.find({
     user: new Types.ObjectId(id),
   });
+  console.log("response", response);
   return response;
 };
 export const updateShippingInfoIntoDB = async (

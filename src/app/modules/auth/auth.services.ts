@@ -12,63 +12,130 @@ import {
 } from "../../lib/utils";
 import { IUser, Role } from "../user/user.interface";
 import User from "../user/user.model";
-
 const registerUserIntoDB = async (user: IUser) => {
-  const { name, email, password, gender, role } = user;
-
-  // Start a Mongoose session
+  const {
+    name,
+    email,
+    password,
+    gender,
+    role = Role.Admin,
+    isGoogleLogin,
+  } = user;
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
+    // Validate required fields
+    if (!email || (!isGoogleLogin && !password)) {
+      throw new AppError("Missing required fields", StatusCodes.BAD_REQUEST);
+    }
+
     // Check if the user already exists
     const existingUser = await User.findOne({ email }).session(session);
-    if (existingUser) {
+
+    if (existingUser && !isGoogleLogin) {
       throw new AppError("User already exists", StatusCodes.CONFLICT);
     }
 
-    // Generate OTP and set expiration
-    const otp = generateOtp();
-    const otpExpiration = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
-    const hashedPassword = await hashPassword(password); // Create new user
-    const newUser = new User({
-      name,
-      email,
-      password: hashedPassword, // Ensure you hash the password before saving
-      gender,
-      otp,
-      otpExpiration,
-      isVerified: false,
-      role: Role.Admin,
-    });
+    // Handle Google login or standard registration
+    const result = isGoogleLogin
+      ? await handleGoogleLogin(user, existingUser, session)
+      : await handleStandardRegistration(user, session);
 
-    // Save the new user within the transaction
-    await newUser.save({ session });
-
-    // Send OTP to user's email
-    await sendOtpEmail(newUser?.email, otp, newUser.name);
-
-    // Commit the transaction
+    // Commit the transaction and return the result
     await session.commitTransaction();
-    return "User registered. Please verify your email.";
+    return result;
   } catch (error) {
-    console.log("err", error);
-    // Abort the transaction in case of an error
+    console.error("Error registering user:", error);
     await session.abortTransaction();
-    if (error instanceof AppError) {
-      throw error; // Re-throw custom AppError
-    } else {
-      // Throw a generic AppError for unexpected errors
-      throw new AppError(
-        "An unexpected error occurred",
-        StatusCodes.INTERNAL_SERVER_ERROR
-      );
-    }
+
+    if (error instanceof AppError) throw error;
+
+    throw new AppError(
+      "An unexpected error occurred during registration",
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
   } finally {
-    // End the session
     session.endSession();
   }
 };
+
+// Handle Google login registration
+const handleGoogleLogin = async (
+  user: IUser,
+  existingUser: IUser | null,
+  session: mongoose.ClientSession
+) => {
+  const hashedPassword = await hashPassword(user.password);
+
+  if (existingUser) {
+    // Return tokens for an existing Google user
+    const accessToken = generateAccessToken(
+      existingUser._id.toString(),
+      existingUser.role
+    );
+    const refreshToken = await generateRefreshToken(existingUser._id);
+
+    const { password: _, ...userWithoutPassword } = existingUser.toObject();
+    return {
+      accessToken,
+      refreshToken,
+      user: userWithoutPassword,
+    };
+  }
+
+  // Register a new Google user
+  const newUser = new User({
+    name: user.name,
+    email: user.email,
+    password: hashedPassword,
+    gender: user.gender,
+    isVerified: true,
+    role: user.role || Role.Admin,
+  });
+
+  const savedUser = await newUser.save({ session });
+  const accessToken = generateAccessToken(
+    savedUser._id.toString(),
+    savedUser.role
+  );
+  const refreshToken = await generateRefreshToken(savedUser._id);
+
+  return {
+    accessToken,
+    refreshToken,
+    user: savedUser.toJSON(),
+  };
+};
+
+// Handle standard registration (non-Google)
+const handleStandardRegistration = async (
+  user: IUser,
+  session: mongoose.ClientSession
+) => {
+  const hashedPassword = await hashPassword(user.password);
+  const otp = generateOtp();
+  const otpExpiration = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
+
+  const newUser = new User({
+    name: user.name,
+    email: user.email,
+    password: hashedPassword,
+    gender: user.gender,
+    otp,
+    otpExpiration,
+    isVerified: false,
+    role: user.role || Role.Admin,
+  });
+
+  await newUser.save({ session });
+
+  // Send OTP email
+  await sendOtpEmail(newUser.email, otp, newUser.name);
+
+  return "User registered. Please verify your email.";
+};
+
 const verifyOtpIntoDB = async (email: string, otp: string) => {
   // Find user by email
   const user: IUser | null = await User.findOne({ email });
@@ -106,6 +173,7 @@ const verifyOtpIntoDB = async (email: string, otp: string) => {
 const loginUserIntoDB = async (email: string, password: string) => {
   // Find user by email
   const user: IUser | null = await User.findOne({ email });
+  console.log("USER", user);
   if (!user) {
     throw new AppError("User not found", StatusCodes.NOT_FOUND);
   }

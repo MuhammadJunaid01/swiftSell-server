@@ -4,7 +4,9 @@ node_modules/
 # Build output directories
 
 build/
-
+.env.local
+.env.development.local
+.env
 # TypeScript temporary files
 *.tsbuildinfo
 
