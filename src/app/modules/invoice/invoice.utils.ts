@@ -14,15 +14,15 @@ export const formatCurrency = (amount: number): string => {
 };
 
 export const generatePDFInvoice = (invoice: Invoice, res: Response) => {
-  const doc = new PDFDocument({ margin: 50 });
-
-  // Pipe the PDF to the response
+  // Ensure headers are set before piping
   res.setHeader("Content-Type", "application/pdf");
   res.setHeader(
     "Content-Disposition",
     `attachment; filename=invoice-${invoice.id}.pdf`
   );
-  doc.pipe(res);
+
+  const doc = new PDFDocument({ margin: 50 });
+  doc.pipe(res); // Pipe directly to the response stream
 
   const colors = {
     header: "#1f4e79",
@@ -153,5 +153,5 @@ export const generatePDFInvoice = (invoice: Invoice, res: Response) => {
     .text("Thank you for your business!", 50, 730, { align: "center" });
 
   // Finalize the PDF
-  doc.end();
+  doc.end(); // Finalize the PDF and send it to the response
 };
